@@ -8,3 +8,7 @@ venv/
 env/
 *.log
 .DS_Store
+*.json
+*.png
+*.jpg
+*.jpeg
