@@ -273,9 +273,9 @@ def run_unified_analysis():
 def main():
     """메인 함수"""
     try:
-        console.print("\n[blue]Security Notice:")
-        console.print("[dim]Tokens are used immediately and never stored on disk")
-        console.print("All tokens are removed from memory after use[/dim]\n")
+        console.print("\n[blue]Security Notice:[/blue]")
+        console.print("[dim]Tokens are used immediately and never stored on disk[/dim]")
+        console.print("[dim]All tokens are removed from memory after use[/dim]\n")
         time.sleep(1)
         
         while True:

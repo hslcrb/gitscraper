@@ -38,3 +38,8 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# PyInstaller & Build Targets
+build/
+!*.spec
+!dist/**/*.exe
