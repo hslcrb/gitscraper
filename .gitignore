@@ -4,13 +4,16 @@
 *token*
 *TOKEN*
 
+# 가상환경
+venv/
+env/
+.venv/
+
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-venv/
-env/
 *.log
 .DS_Store
 *.json
