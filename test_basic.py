@@ -7,6 +7,8 @@ GitHub Profile Analyzer - Basic Tests
 import os
 import sys
 import json
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent / "src"))
 from github_scraper import GitHubProfileAnalyzer
 from dotenv import load_dotenv
 

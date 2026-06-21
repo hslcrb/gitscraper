@@ -1,45 +1,41 @@
-# 보안: Token 관련 파일은 절대 커밋하지 않음
+# Node.js
+node_modules/
+dist-web/
+.npm
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+.Python
+*.log
+
+# PyInstaller & Build Targets (keeping specified build artifacts)
+build/
+!github-profile-analyzer.spec
+!dist/github-profile-analyzer.exe
+
+# Security
 .env
 .env.*
 *token*
 *TOKEN*
 
-# 가상환경
-venv/
-env/
-.venv/
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.log
-
-# 분석 결과물 (생성된 파일들)
-*.json
-*.html
-*.png
-*.jpg
-*.jpeg
-*.svg
-*.pdf
-*_analysis.*
-*_report.*
-*_visualization.*
-
-# 시스템 파일
+# OS / Systems
 .DS_Store
 Thumbs.db
 
-# IDE
+# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# PyInstaller & Build Targets
-build/
-!*.spec
-!dist/**/*.exe
+# Scraped Results & Reports (Using specific patterns to avoid ignoring index.html)
+*_analysis.json
+*_visualization.html
+*_table.png
+*_analysis.png
+hslcrb_analysis.json

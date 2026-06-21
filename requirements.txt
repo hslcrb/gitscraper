@@ -3,3 +3,4 @@ PyGithub==2.1.1
 matplotlib==3.8.2
 numpy==1.26.2
 rich==13.7.0
+python-dotenv
