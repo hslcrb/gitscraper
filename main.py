@@ -56,14 +56,14 @@ def show_banner():
 def show_main_menu():
     """메인 메뉴 표시"""
     menu_panel = Panel(
-        "[bold cyan]1[/] 📊 프로필 기본 분석\n"
-        "[bold cyan]2[/] 🔬 프로필 고급 분석\n"
-        "[bold cyan]3[/] 📈 시각화 생성\n"
-        "[bold cyan]4[/] 🔄 프로필 비교\n"
-        "[bold cyan]5[/] 📄 리포트 내보내기\n"
-        "[bold cyan]6[/] ⚙️  설정\n"
-        "[bold cyan]0[/] 🚪 종료",
-        title="[bold white on blue] 메인 메뉴 [/]",
+        "[bold cyan]1[/] [*] 프로필 기본 분석\n"
+        "[bold cyan]2[/] [+] 프로필 고급 분석\n"
+        "[bold cyan]3[/] [~] 시각화 생성\n"
+        "[bold cyan]4[/] [=] 프로필 비교\n"
+        "[bold cyan]5[/] [@] 리포트 내보내기\n"
+        "[bold cyan]6[/] [#] 설정\n"
+        "[bold cyan]0[/] [X] 종료",
+        title="[bold white on blue] 메인 메뉴 ",
         border_style="cyan",
         box=box.DOUBLE
     )
@@ -73,7 +73,7 @@ def show_main_menu():
 def create_stats_table(stats: dict) -> Table:
     """통계 테이블 생성"""
     table = Table(
-        title="📊 종합 통계",
+        title="[*] 종합 통계",
         box=box.ROUNDED,
         show_header=True,
         header_style="bold magenta",
@@ -97,7 +97,7 @@ def create_stats_table(stats: dict) -> Table:
 def create_language_table(lang_dist: dict) -> Table:
     """언어 분포 테이블 생성"""
     table = Table(
-        title="💻 언어별 코드 분포",
+        title="[</>] 언어별 코드 분포",
         box=box.ROUNDED,
         show_header=True,
         header_style="bold yellow",
@@ -134,23 +134,23 @@ def create_language_table(lang_dist: dict) -> Table:
 
 def create_repo_tree(repos: list) -> Tree:
     """리포지토리 트리 생성"""
-    tree = Tree("📦 [bold cyan]리포지토리 목록[/]")
+    tree = Tree("[#] [bold cyan]리포지토리 목록")
     
     sorted_repos = sorted(repos, key=lambda x: x.get('commit_count', 0), reverse=True)[:15]
     
     for repo in sorted_repos:
-        repo_branch = tree.add(f"[bold yellow]{repo['name']}[/]")
-        repo_branch.add(f"🔗 {repo['url']}")
-        repo_branch.add(f"📝 {repo.get('description', 'No description')[:60]}...")
+        repo_branch = tree.add(f"[bold yellow]{repo['name']}")
+        repo_branch.add(f"[>] {repo['url']}")
+        repo_branch.add(f"[-] {repo.get('description', 'No description')[:60]}...")
         
-        stats_text = (f"⭐ {repo.get('stars', 0):,} | "
-                     f"🔀 {repo.get('forks', 0):,} | "
-                     f"📊 {repo.get('commit_count', 0):,} commits")
+        stats_text = (f"[*] {repo.get('stars', 0):,} | "
+                     f"[+] {repo.get('forks', 0):,} | "
+                     f"[~] {repo.get('commit_count', 0):,} commits")
         repo_branch.add(stats_text)
         
         if repo.get('languages'):
             langs = ', '.join(list(repo['languages'].keys())[:3])
-            repo_branch.add(f"💻 {langs}")
+            repo_branch.add(f"[</>] {langs}")
     
     return tree
 
@@ -162,17 +162,17 @@ def get_github_token():
     if _github_token:
         return _github_token
     
-    console.print("\n[yellow]🔐 GitHub Personal Access Token이 필요합니다.[/]")
-    console.print("[dim]Token은 메모리에만 저장되며 파일로 저장되지 않습니다.[/]\n")
+    console.print("\n[yellow][!] GitHub Personal Access Token이 필요합니다.")
+    console.print("[dim]Token은 메모리에만 저장되며 파일로 저장되지 않습니다.\n")
     
     token = getpass("Token을 입력하세요 (입력 내용은 화면에 표시되지 않습니다): ")
     
     if not token:
-        console.print("[red]❌ Token이 필요합니다.[/]")
+        console.print("[red][X] Token이 필요합니다.")
         return None
     
     _github_token = token
-    console.print("[green]✅ Token이 설정되었습니다.[/]\n")
+    console.print("[green][+] Token이 설정되었습니다.\n")
     return token
 
 
@@ -181,7 +181,7 @@ def clear_token():
     global _github_token
     if _github_token:
         _github_token = None
-        console.print("[yellow]🔒 Token이 메모리에서 제거되었습니다.[/]")
+        console.print("[yellow][#] Token이 메모리에서 제거되었습니다.")
 
 
 def analyze_profile_with_progress(username: str):
@@ -205,21 +205,21 @@ def analyze_profile_with_progress(username: str):
             
             # 리포지토리 가져오기
             task1 = progress.add_task(
-                f"[cyan]🔍 {username}의 리포지토리 검색 중...",
+                f"[cyan][?] {username}의 리포지토리 검색 중...",
                 total=100
             )
             repos = analyzer.get_user_repos(username)
             progress.update(task1, completed=100)
             
             if not repos:
-                console.print("[red]❌ 리포지토리를 찾을 수 없습니다.[/]")
+                console.print("[red][X] 리포지토리를 찾을 수 없습니다.")
                 return None
             
-            console.print(f"\n[green]✅ {len(repos)}개의 공개 리포지토리 발견![/]\n")
+            console.print(f"\n[green][+] {len(repos)}개의 공개 리포지토리 발견!\n")
             
             # 각 리포지토리 분석
             task2 = progress.add_task(
-                "[cyan]📊 리포지토리 분석 중...",
+                "[cyan][*] 리포지토리 분석 중...",
                 total=len(repos)
             )
             
@@ -232,7 +232,7 @@ def analyze_profile_with_progress(username: str):
             
             # 통계 생성
             task3 = progress.add_task(
-                "[cyan]📈 통계 생성 중...",
+                "[cyan][~] 통계 생성 중...",
                 total=100
             )
             stats = analyzer.generate_statistics(repos_data)
@@ -247,7 +247,8 @@ def analyze_profile_with_progress(username: str):
         return result
         
     except Exception as e:
-        console.print(f"[red]❌ 오류 발생: {e}[/]")
+        error_msg = str(e).replace('[', '\\[').replace(']', '\\]')
+        console.print(f"[red][X] 오류 발생: {error_msg}")
         return None
 
 
@@ -262,7 +263,7 @@ def show_analysis_results(result: dict):
     
     # 헤더
     header = Panel(
-        f"[bold white on blue] 분석 완료: {username} [/]",
+        f"[bold white on blue] 분석 완료: {username} ",
         border_style="cyan"
     )
     console.print(header)
@@ -286,16 +287,17 @@ def show_analysis_results(result: dict):
     console.print()
     
     # JSON 저장 옵션
-    if Confirm.ask("💾 결과를 JSON 파일로 저장하시겠습니까?", default=False):
+    if Confirm.ask("[?] 결과를 JSON 파일로 저장하시겠습니까?", default=False):
         import json
         filename = f"{username}_analysis.json"
         
         try:
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(result, f, ensure_ascii=False, indent=2)
-            console.print(f"[green]✅ 저장 완료: {filename}[/]")
+            console.print(f"[green][+] 저장 완료: {filename}")
         except Exception as e:
-            console.print(f"[red]❌ 저장 실패: {e}[/]")
+            error_msg = str(e).replace('[', '\\[').replace(']', '\\]')
+            console.print(f"[red][X] 저장 실패: {error_msg}")
     
     console.print()
     Prompt.ask("계속하려면 Enter를 누르세요")
@@ -307,22 +309,22 @@ def basic_analysis():
     show_banner()
     
     panel = Panel(
-        "[bold cyan]GitHub 프로필 기본 분석[/]\n\n"
+        "[bold cyan]GitHub 프로필 기본 분석\n\n"
         "사용자명 또는 프로필 URL을 입력하세요.",
-        title="[bold white on blue] 기본 분석 [/]",
+        title="[bold white on blue] 기본 분석 ",
         border_style="cyan"
     )
     console.print(panel)
     console.print()
     
-    username = Prompt.ask("👤 [cyan]GitHub 사용자명[/]")
+    username = Prompt.ask("[>] [cyan]GitHub 사용자명")
     
     # URL에서 사용자명 추출
     if 'github.com' in username:
         username = username.rstrip('/').split('/')[-1]
     
     if not username:
-        console.print("[red]❌ 사용자명을 입력해주세요.[/]")
+        console.print("[red][X] 사용자명을 입력해주세요.")
         time.sleep(2)
         return
     
@@ -339,10 +341,10 @@ def advanced_analysis():
     show_banner()
     
     panel = Panel(
-        "[bold yellow]🔬 고급 분석 기능[/]\n\n"
+        "[bold yellow][+] 고급 분석 기능\n\n"
         "코드 변경량, 활동 패턴, 기여도 등을 상세 분석합니다.\n"
-        "[dim]구현 예정...[/]",
-        title="[bold white on blue] 고급 분석 [/]",
+        "[dim]구현 예정...",
+        title="[bold white on blue] 고급 분석 ",
         border_style="yellow"
     )
     console.print(panel)
@@ -356,10 +358,10 @@ def visualize_data():
     show_banner()
     
     panel = Panel(
-        "[bold green]📈 데이터 시각화[/]\n\n"
+        "[bold green][~] 데이터 시각화\n\n"
         "차트와 그래프를 생성합니다.\n"
-        "[dim]구현 예정...[/]",
-        title="[bold white on blue] 시각화 [/]",
+        "[dim]구현 예정...",
+        title="[bold white on blue] 시각화 ",
         border_style="green"
     )
     console.print(panel)
@@ -373,10 +375,10 @@ def compare_profiles():
     show_banner()
     
     panel = Panel(
-        "[bold magenta]🔄 프로필 비교[/]\n\n"
+        "[bold magenta][=] 프로필 비교\n\n"
         "여러 GitHub 프로필을 비교 분석합니다.\n"
-        "[dim]구현 예정...[/]",
-        title="[bold white on blue] 프로필 비교 [/]",
+        "[dim]구현 예정...",
+        title="[bold white on blue] 프로필 비교 ",
         border_style="magenta"
     )
     console.print(panel)
@@ -390,10 +392,10 @@ def export_report():
     show_banner()
     
     panel = Panel(
-        "[bold blue]📄 리포트 내보내기[/]\n\n"
+        "[bold blue][@] 리포트 내보내기\n\n"
         "Markdown, HTML, CSV 등 다양한 형식으로 내보냅니다.\n"
-        "[dim]구현 예정...[/]",
-        title="[bold white on blue] 리포트 내보내기 [/]",
+        "[dim]구현 예정...",
+        title="[bold white on blue] 리포트 내보내기 ",
         border_style="blue"
     )
     console.print(panel)
@@ -407,26 +409,26 @@ def show_settings():
     show_banner()
     
     panel = Panel(
-        "[bold cyan]⚙️  설정[/]\n\n"
-        "[yellow]1[/] 🔑 Token 재설정\n"
-        "[yellow]2[/] 🔒 Token 제거 (메모리)\n"
-        "[yellow]3[/] ℹ️  Token 상태 확인\n"
-        "[yellow]0[/] 🔙 뒤로 가기",
-        title="[bold white on blue] 설정 [/]",
+        "[bold cyan][#] 설정\n\n"
+        "[yellow]1[/] [+] Token 재설정\n"
+        "[yellow]2[/] [#] Token 제거 (메모리)\n"
+        "[yellow]3[/] [?] Token 상태 확인\n"
+        "[yellow]0[/] [<] 뒤로 가기",
+        title="[bold white on blue] 설정 ",
         border_style="cyan"
     )
     console.print(panel)
     console.print()
     
     choice = Prompt.ask(
-        "💡 [bold cyan]선택[/]",
+        "[>] [bold cyan]선택",
         choices=["0", "1", "2", "3"],
         default="0"
     )
     
     if choice == "1":
         clear_token()
-        console.print("[green]Token을 재설정하려면 다시 분석을 실행하세요.[/]")
+        console.print("[green]Token을 재설정하려면 다시 분석을 실행하세요.")
         time.sleep(2)
     elif choice == "2":
         clear_token()
@@ -434,9 +436,9 @@ def show_settings():
     elif choice == "3":
         global _github_token
         if _github_token:
-            console.print(f"[green]✅ Token 설정됨 (길이: {len(_github_token)} 문자)[/]")
+            console.print(f"[green][+] Token 설정됨 (길이: {len(_github_token)} 문자)")
         else:
-            console.print("[yellow]⚠️  Token이 설정되지 않았습니다.[/]")
+            console.print("[yellow][!] Token이 설정되지 않았습니다.")
         time.sleep(2)
 
 
@@ -444,9 +446,9 @@ def main():
     """메인 함수"""
     try:
         # 시작 시 보안 안내
-        console.print("\n[bold cyan]🔒 보안 알림:[/]")
+        console.print("\n[bold cyan][!] 보안 알림:")
         console.print("[dim]이 프로그램은 GitHub Token을 메모리에만 저장하며,")
-        console.print("파일로 저장하지 않습니다. 프로그램 종료 시 자동으로 제거됩니다.[/]\n")
+        console.print("파일로 저장하지 않습니다. 프로그램 종료 시 자동으로 제거됩니다.\n")
         time.sleep(1)
         
         while True:
@@ -456,7 +458,7 @@ def main():
             console.print()
             
             choice = Prompt.ask(
-                "💡 [bold cyan]선택[/]",
+                "[>] [bold cyan]선택",
                 choices=["0", "1", "2", "3", "4", "5", "6"],
                 default="1"
             )
@@ -464,7 +466,7 @@ def main():
             if choice == "0":
                 # 종료 시 Token 제거
                 clear_token()
-                console.print("\n[bold green]👋 프로그램을 종료합니다. 감사합니다![/]\n")
+                console.print("\n[bold green][!] 프로그램을 종료합니다. 감사합니다!\n")
                 break
             elif choice == "1":
                 basic_analysis()
@@ -482,10 +484,11 @@ def main():
     except KeyboardInterrupt:
         # Ctrl+C 시에도 Token 제거
         clear_token()
-        console.print("\n\n[yellow]⚠️  사용자에 의해 중단되었습니다.[/]\n")
+        console.print("\n\n[yellow][!] 사용자에 의해 중단되었습니다.\n")
     except Exception as e:
         clear_token()
-        console.print(f"\n[red]❌ 오류 발생: {str(e)}[/]\n")
+        error_msg = str(e).replace('[', '\\[').replace(']', '\\]')
+        console.print(f"\n[red][X] 오류 발생: {error_msg}\n")
         return 1
     finally:
         # 최종 정리: Token 확실히 제거
