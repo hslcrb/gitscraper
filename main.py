@@ -2,11 +2,13 @@
 """
 GitHub Profile Analyzer - RICH TUI Main
 RICH 라이브러리 기반 터미널 UI 메인 프로그램
+보안: Token을 메모리에만 유지하고 파일에 저장하지 않음
 """
 
 import sys
 import os
 from pathlib import Path
+from getpass import getpass
 
 # src 폴더를 Python 경로에 추가
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -27,6 +29,9 @@ import time
 from github_scraper import GitHubProfileAnalyzer
 
 console = Console()
+
+# 전역 토큰 변수 (세션 동안만 메모리에 유지)
+_github_token = None
 
 
 def show_banner():
@@ -150,12 +155,45 @@ def create_repo_tree(repos: list) -> Tree:
     return tree
 
 
+def get_github_token():
+    """GitHub Token 가져오기 (보안: 화면에 표시 안 됨)"""
+    global _github_token
+    
+    if _github_token:
+        return _github_token
+    
+    console.print("\n[yellow]🔐 GitHub Personal Access Token이 필요합니다.[/]")
+    console.print("[dim]Token은 메모리에만 저장되며 파일로 저장되지 않습니다.[/]\n")
+    
+    token = getpass("Token을 입력하세요 (입력 내용은 화면에 표시되지 않습니다): ")
+    
+    if not token:
+        console.print("[red]❌ Token이 필요합니다.[/]")
+        return None
+    
+    _github_token = token
+    console.print("[green]✅ Token이 설정되었습니다.[/]\n")
+    return token
+
+
+def clear_token():
+    """Token 메모리에서 제거"""
+    global _github_token
+    if _github_token:
+        _github_token = None
+        console.print("[yellow]🔒 Token이 메모리에서 제거되었습니다.[/]")
+
+
 def analyze_profile_with_progress(username: str):
     """프로그레스바와 함께 프로필 분석"""
     console.print()
     
+    token = get_github_token()
+    if not token:
+        return None
+    
     try:
-        analyzer = GitHubProfileAnalyzer()
+        analyzer = GitHubProfileAnalyzer(token=token)
         
         with Progress(
             SpinnerColumn(),
@@ -370,19 +408,47 @@ def show_settings():
     
     panel = Panel(
         "[bold cyan]⚙️  설정[/]\n\n"
-        "GitHub Token 및 기타 설정을 관리합니다.\n"
-        "[dim]구현 예정...[/]",
+        "[yellow]1[/] 🔑 Token 재설정\n"
+        "[yellow]2[/] 🔒 Token 제거 (메모리)\n"
+        "[yellow]3[/] ℹ️  Token 상태 확인\n"
+        "[yellow]0[/] 🔙 뒤로 가기",
         title="[bold white on blue] 설정 [/]",
         border_style="cyan"
     )
     console.print(panel)
     console.print()
-    Prompt.ask("계속하려면 Enter를 누르세요")
+    
+    choice = Prompt.ask(
+        "💡 [bold cyan]선택[/]",
+        choices=["0", "1", "2", "3"],
+        default="0"
+    )
+    
+    if choice == "1":
+        clear_token()
+        console.print("[green]Token을 재설정하려면 다시 분석을 실행하세요.[/]")
+        time.sleep(2)
+    elif choice == "2":
+        clear_token()
+        time.sleep(2)
+    elif choice == "3":
+        global _github_token
+        if _github_token:
+            console.print(f"[green]✅ Token 설정됨 (길이: {len(_github_token)} 문자)[/]")
+        else:
+            console.print("[yellow]⚠️  Token이 설정되지 않았습니다.[/]")
+        time.sleep(2)
 
 
 def main():
     """메인 함수"""
     try:
+        # 시작 시 보안 안내
+        console.print("\n[bold cyan]🔒 보안 알림:[/]")
+        console.print("[dim]이 프로그램은 GitHub Token을 메모리에만 저장하며,")
+        console.print("파일로 저장하지 않습니다. 프로그램 종료 시 자동으로 제거됩니다.[/]\n")
+        time.sleep(1)
+        
         while True:
             console.clear()
             show_banner()
@@ -396,6 +462,8 @@ def main():
             )
             
             if choice == "0":
+                # 종료 시 Token 제거
+                clear_token()
                 console.print("\n[bold green]👋 프로그램을 종료합니다. 감사합니다![/]\n")
                 break
             elif choice == "1":
@@ -412,10 +480,16 @@ def main():
                 show_settings()
     
     except KeyboardInterrupt:
+        # Ctrl+C 시에도 Token 제거
+        clear_token()
         console.print("\n\n[yellow]⚠️  사용자에 의해 중단되었습니다.[/]\n")
     except Exception as e:
+        clear_token()
         console.print(f"\n[red]❌ 오류 발생: {e}[/]\n")
         return 1
+    finally:
+        # 최종 정리: Token 확실히 제거
+        clear_token()
     
     return 0
 

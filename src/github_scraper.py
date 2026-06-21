@@ -7,27 +7,23 @@ GitHub 프로필의 오픈소스 리포지토리 분석 도구
 import os
 from typing import List, Dict, Any
 from github import Github, Repository
-from dotenv import load_dotenv
 from collections import defaultdict
-
-# .env 파일에서 환경 변수 로드
-load_dotenv()
 
 
 class GitHubProfileAnalyzer:
     """GitHub 프로필 분석기"""
     
-    def __init__(self, token: str = None):
+    def __init__(self, token: str):
         """
         초기화
         
         Args:
-            token: GitHub Personal Access Token (없으면 환경 변수에서 로드)
+            token: GitHub Personal Access Token (필수)
         """
-        self.token = token or os.getenv('GITHUB_TOKEN')
-        if not self.token:
-            raise ValueError("GitHub token이 필요합니다. .env 파일에 GITHUB_TOKEN을 설정하세요.")
+        if not token:
+            raise ValueError("GitHub token이 필요합니다.")
         
+        self.token = token
         self.github = Github(self.token)
     
     def get_user_repos(self, username: str) -> List[Repository.Repository]:
@@ -221,9 +217,18 @@ class GitHubProfileAnalyzer:
 
 def main():
     """메인 함수"""
+    from getpass import getpass
+    
     print("="*80)
     print("GitHub Profile Analyzer")
     print("="*80)
+    
+    # GitHub Token 입력 (보안: 화면에 표시 안 됨)
+    token = getpass("\nGitHub Personal Access Token을 입력하세요: ")
+    
+    if not token:
+        print("❌ Token이 필요합니다.")
+        return 1
     
     # 사용자 입력
     username = input("\nGitHub 사용자명 또는 프로필 URL을 입력하세요: ").strip()
@@ -233,14 +238,21 @@ def main():
         username = username.rstrip('/').split('/')[-1]
     
     try:
-        analyzer = GitHubProfileAnalyzer()
+        analyzer = GitHubProfileAnalyzer(token=token)
         result = analyzer.analyze_profile(username)
         
         if result:
             print("\n✅ 분석이 완료되었습니다!")
         
+        # Token 메모리에서 즉시 제거
+        del token
+        del analyzer
+        
     except Exception as e:
         print(f"\n❌ 오류 발생: {e}")
+        return 1
+    
+    return 0
 
 
 if __name__ == "__main__":

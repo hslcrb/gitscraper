@@ -1,4 +1,9 @@
+# 보안: Token 관련 파일은 절대 커밋하지 않음
 .env
+.env.*
+*token*
+*TOKEN*
+
 __pycache__/
 *.pyc
 *.pyo

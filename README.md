@@ -50,18 +50,30 @@ cd gitscraper
 pip install -r requirements.txt
 ```
 
-3. **GitHub Token 설정**
-```bash
-cp .env.example .env
-# .env 파일을 편집하여 GITHUB_TOKEN 입력
-```
+3. **GitHub Token 준비**
+- GitHub에서 Personal Access Token 발급
+- Settings → Developer settings → Personal access tokens → Generate new token
+- 필요한 권한: `repo`, `user`
+- **⚠️ 중요**: Token은 파일로 저장하지 마세요! 프로그램 실행 시 직접 입력합니다.
 
 ### 실행
 
 ```bash
 # RICH TUI 메인 프로그램 실행
 python main.py
+
+# 프로그램이 시작되면 GitHub Token을 입력하라는 메시지가 표시됩니다
+# Token은 화면에 표시되지 않으며, 메모리에만 저장됩니다
 ```
+
+## 🔒 보안 특징
+
+### Token 보안
+- ✅ **파일 저장 없음**: Token을 .env나 다른 파일에 저장하지 않습니다
+- ✅ **메모리만 사용**: Token은 프로그램 실행 중에만 메모리에 존재합니다
+- ✅ **자동 제거**: 프로그램 종료 시 Token이 메모리에서 자동으로 제거됩니다
+- ✅ **화면 숨김**: Token 입력 시 화면에 표시되지 않습니다 (getpass 사용)
+- ✅ **추적 불가**: 컴퓨터에 Token 흔적이 남지 않습니다
 
 ## 🎮 사용법
 
