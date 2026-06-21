@@ -8,7 +8,7 @@
 ```bash
 # 저장소 포크 (GitHub 웹사이트에서)
 # 그 후 클론
-git clone https://github.com/YOUR_USERNAME/gitscraper.git
+git clone https://github.com/hslcrb/gitscraper.git
 cd gitscraper
 ```
 
