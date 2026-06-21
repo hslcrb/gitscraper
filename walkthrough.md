@@ -75,12 +75,31 @@ npm run build
 ```
 Output:
 ```text
-✓ built in 377ms
-dist-web/index.html                 19.51 kB
-dist-web/assets/index-aldPOMOI.css   9.02 kB
-dist-web/assets/index-CsAwmyIT.js   19.56 kB
+✓ built in 193ms
+dist-web/index.html                 19.15 kB │ gzip: 4.59 kB
+dist-web/assets/index-DFiNcbgA.css   8.99 kB │ gzip: 2.23 kB
+dist-web/assets/index-D-tkIvxQ.js   19.45 kB │ gzip: 6.14 kB
 ```
 
 ### 3. Local Access
 The development server is running and accessible at:
 [http://localhost:3000/](http://localhost:3000/) (no `/index.html` in the path).
+
+---
+
+## 🎨 Octocat SVG Asset & Bright Green Styling
+
+We replaced the inline SVG in the header with a dedicated, tracked static asset and stylized it without modifying the original graphic:
+1. **[octocat.svg](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/public/assets/octocat.svg)**: Added the official GitHub Octocat logo under the Vite `public/assets/` directory to ensure proper serving and automatic copying to `dist-web/assets/` upon build.
+2. **[index.html](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/index.html)**: Linked the header logo via `<img src="/assets/octocat.svg">` instead of inline SVG.
+3. **[index.css](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/src/index.css)**:
+   - Configured `.logo-icon` with a CSS `filter` (`invert(73%) sepia(60%) saturate(600%) hue-rotate(95deg) brightness(1.05) drop-shadow(...)`) to dynamically render the black SVG as a bright, glowing light-green color.
+   - Updated the logo container background to a soft green shade (`#f0fdf4`) for visual coherence.
+
+---
+
+## ☁️ Vercel Deployment & Package Updates
+
+1. **[vercel.json](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/vercel.json)**: Created a Vercel configuration file with rewrite rules (`"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]`) to support Single Page Application (SPA) client-side routing on Vercel deployment.
+2. **Vite Upgrade**: Upgraded Vite from v5.4.21 to v8.0.16 to address moderate/high security vulnerabilities in `esbuild`.
+
