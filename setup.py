@@ -19,7 +19,7 @@ setup(
     description="GitHub 프로필 분석 도구 - 커밋, 코드량, 언어 분포 통계",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/gitscraper",
+    url="https://github.com/hslcrb/gitscraper",
     py_modules=[
         "github_scraper",
         "github_scraper_cli",
