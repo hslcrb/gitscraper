@@ -9,14 +9,32 @@ venv/
 env/
 .venv/
 
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
 *.log
-.DS_Store
+
+# 분석 결과물 (생성된 파일들)
 *.json
+*.html
 *.png
 *.jpg
 *.jpeg
+*.svg
+*.pdf
+*_analysis.*
+*_report.*
+*_visualization.*
+
+# 시스템 파일
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
