@@ -485,7 +485,7 @@ def main():
         console.print("\n\n[yellow]⚠️  사용자에 의해 중단되었습니다.[/]\n")
     except Exception as e:
         clear_token()
-        console.print(f"\n[red]❌ 오류 발생: {e}[/]\n")
+        console.print(f"\n[red]❌ 오류 발생: {str(e)}[/]\n")
         return 1
     finally:
         # 최종 정리: Token 확실히 제거
