@@ -390,3 +390,55 @@ Continue
    - Vercel 배포 시 Single Page Application(SPA) 라우팅을 지원하기 위해 작성된 [vercel.json](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/vercel.json) 설정, Vite 패키지 보안 업그레이드 내용, 옥토캣 SVG 배치 및 CSS 필터 효과 내용들을 루트의 [walkthrough.md](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/walkthrough.md)에 상세히 반영 및 커밋을 완료했습니다.
 
 현재 모든 작업이 오류 없이 성공적으로 완료되었으며, 작업 디렉토리가 깨끗한 상태(Clean)입니다. 추가적으로 필요하시거나 수정하고 싶으신 부분이 있다면 언제든 말씀해 주세요!
+
+### User Input
+
+버셀에서 배포할때 다 되게 json설정하라
+
+*Viewed [vercel.json](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/vercel.json) *
+
+*Searched web for vercel.json outputDirectory buildCommand*
+
+*Edited relevant file*
+
+*Viewed [vercel.json](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/vercel.json) *
+
+*User accepted the command `git diff vercel.json`*
+
+*User accepted the command `git add vercel.json && git commit -m "Chore: Configure vercel.json buildCommand and outputDirectory for zero-config Vercel deployment"`*
+
+*User accepted the command `git status`*
+
+*User accepted the command `git log -n 5`*
+
+*Viewed [walkthrough.md](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/walkthrough.md) *
+
+*Edited relevant file*
+
+*User accepted the command `git add walkthrough.md && git commit -m "Docs: Update walkthrough.md to document detailed vercel.json configurations"`*
+
+*User accepted the command `git status`*
+
+### Planner Response
+
+Vercel에서 별도의 수동 대시보드 설정(Build Command, Output Directory 등) 없이 **레포지토리 임포트만으로 즉시 배포(Zero-Config) 및 작동**할 수 있도록 [vercel.json](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/vercel.json) 설정을 보완 및 커밋했습니다.
+
+### 📄 수정된 `vercel.json` 파일 내용
+
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist-web",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+### 💡 설정 주요 항목
+1. **`buildCommand` (`npm run build`)**: Vercel이 프로젝트를 빌드할 때 자동으로 실행할 빌드 커맨드를 지정하여 프레임워크 자동 감지 실패를 방지합니다.
+2. **`outputDirectory` (`dist-web`)**: Vite 빌드 결과물이 저장되는 사용자 지정 폴더인 `dist-web` 폴더를 Vercel이 배포 대상 폴더로 정확하게 인지하도록 구성합니다.
+3. **`cleanUrls` & `rewrites`**: Single Page Application(SPA) 라우팅을 정상 지원하여 `/about` 등의 임의 경로로 직접 접속하더라도 `index.html`로 리다이렉트되어 정상적으로 페이지가 노출되도록 보장합니다.
+
+해당 내용들을 반영하여 [walkthrough.md](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/walkthrough.md) 문서 역시 업데이트하고 최신 상태로 커밋을 완료했습니다. 이제 Vercel에 올려서 배포하시면 완벽히 연동됩니다!
