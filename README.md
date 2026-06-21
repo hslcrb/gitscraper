@@ -45,12 +45,21 @@ git clone https://github.com/hslcrb/gitscraper.git
 cd gitscraper
 ```
 
-2. **의존성 설치**
+2. **가상환경 생성 및 활성화** (리눅스 필수)
+```bash
+# 가상환경 생성
+python3 -m venv venv
+
+# 가상환경 활성화
+source venv/bin/activate
+```
+
+3. **의존성 설치**
 ```bash
 pip install -r requirements.txt
 ```
 
-3. **GitHub Token 준비**
+4. **GitHub Token 준비**
 - GitHub에서 Personal Access Token 발급
 - Settings → Developer settings → Personal access tokens → Generate new token
 - 필요한 권한: `repo`, `user`
@@ -59,11 +68,17 @@ pip install -r requirements.txt
 ### 실행
 
 ```bash
-# RICH TUI 메인 프로그램 실행
+# 가상환경이 활성화된 상태에서
 python main.py
 
 # 프로그램이 시작되면 GitHub Token을 입력하라는 메시지가 표시됩니다
 # Token은 화면에 표시되지 않으며, 메모리에만 저장됩니다
+```
+
+### 가상환경 종료
+
+```bash
+deactivate
 ```
 
 ## 🔒 보안 특징
