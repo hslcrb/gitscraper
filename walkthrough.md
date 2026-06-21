@@ -100,6 +100,9 @@ We replaced the inline SVG in the header with a dedicated, tracked static asset 
 
 ## ☁️ Vercel Deployment & Package Updates
 
-1. **[vercel.json](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/vercel.json)**: Created a Vercel configuration file with rewrite rules (`"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]`) to support Single Page Application (SPA) client-side routing on Vercel deployment.
+1. **[vercel.json](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/vercel.json)**: Configured the build settings and routing for Vercel deployment:
+   - Added `"buildCommand": "npm run build"` to override the default build script.
+   - Added `"outputDirectory": "dist-web"` to match our custom Vite output directory.
+   - Added `"cleanUrls": true` and `"rewrites"` to support Single Page Application (SPA) client-side routing on Vercel deployment.
 2. **Vite Upgrade**: Upgraded Vite from v5.4.21 to v8.0.16 to address moderate/high security vulnerabilities in `esbuild`.
 
