@@ -131,6 +131,30 @@ python run_analysis.py torvalds -o results
 - `{username}_repo_commits.png`: 리포지토리별 커밋 수
 - `{username}_repo_popularity.png`: 스타/포크 인기도
 
+### 6. 프로필 비교
+```bash
+# 여러 사용자 비교
+python compare_profiles.py user1.json user2.json user3.json
+
+# CSV로 저장
+python compare_profiles.py user1.json user2.json --csv comparison.csv
+```
+
+### 7. 리포트 내보내기
+```bash
+# Markdown 리포트 생성
+python export_report.py result.json --markdown report.md
+
+# HTML 리포트 생성
+python export_report.py result.json --html report.html
+
+# CSV 리포트 생성
+python export_report.py result.json --csv repos.csv
+
+# 모든 형식으로 내보내기
+python export_report.py result.json --all output
+```
+
 ## 프로젝트 구조
 
 ```
@@ -140,10 +164,18 @@ gitscraper/
 ├── advanced_analyzer.py       # 고급 분석 (코드 변경량, 패턴)
 ├── visualizer.py              # 시각화 생성
 ├── run_analysis.py            # 통합 실행 스크립트
+├── compare_profiles.py        # 프로필 비교 도구
+├── export_report.py           # 리포트 내보내기
+├── test_basic.py              # 기본 테스트
+├── example_batch.sh           # 배치 분석 예제
 ├── requirements.txt           # 의존성
+├── setup.py                   # 설치 스크립트
 ├── .env.example              # 환경 변수 예제
 ├── .gitignore                # Git 무시 파일
-└── README.md                 # 문서
+├── LICENSE                   # 라이선스
+├── README.md                 # 문서
+├── USAGE.md                  # 사용 가이드
+└── CONTRIBUTING.md           # 기여 가이드
 ```
 
 ## 요구사항
