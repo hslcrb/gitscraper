@@ -112,16 +112,44 @@ header p {
   font-size: 1rem;
 }
 
+.header-badges {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
 header .wasm-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   background: var(--accent-green-light);
   border: 1px solid rgba(46, 164, 79, 0.4);
   color: var(--text-success);
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 3px 8px;
+  padding: 3px 10px;
   border-radius: 12px;
-  margin-top: 8px;
+}
+
+.btn-open-source {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--accent-green);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid rgba(27, 31, 36, 0.15);
+  transition: var(--transition);
+}
+
+.btn-open-source:hover {
+  background-color: var(--accent-green-hover);
+  text-decoration: none;
 }
 
 /* Config Panel */
