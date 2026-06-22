@@ -39,3 +39,12 @@ Thumbs.db
 *_table.png
 *_analysis.png
 hslcrb_analysis.json
+
+# Reports & Exports
+*.json
+!package.json
+!package-lock.json
+!vercel.json
+!tsconfig.json
+*.pdf
+
