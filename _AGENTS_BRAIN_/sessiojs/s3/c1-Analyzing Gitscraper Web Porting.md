@@ -442,3 +442,136 @@ Vercel에서 별도의 수동 대시보드 설정(Build Command, Output Director
 3. **`cleanUrls` & `rewrites`**: Single Page Application(SPA) 라우팅을 정상 지원하여 `/about` 등의 임의 경로로 직접 접속하더라도 `index.html`로 리다이렉트되어 정상적으로 페이지가 노출되도록 보장합니다.
 
 해당 내용들을 반영하여 [walkthrough.md](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/walkthrough.md) 문서 역시 업데이트하고 최신 상태로 커밋을 완료했습니다. 이제 Vercel에 올려서 배포하시면 완벽히 연동됩니다!
+
+### User Input
+
+또한 다크모드도 지원하고, 한국어, 일본어, 중국어, 중국어(대만), 러시아어, 스페인어를 지원하라. 다만 전환 UI는 결코 없게하고 시스템(브라우저)를 자동으로 감지해서 보여주도록 한다. 또한 커밋 메시지는 영어 접두어 한국어 메시지로
+
+*Viewed [index.html](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/index.html) *
+
+*Viewed [main.js](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/main.js) *
+
+*Viewed [main.js](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/main.js) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Grep searched codebase*
+
+*Edited relevant file*
+
+### Planner Response
+
+다크 모드 지원 및 한국어, 일본어, 중국어(간체/대체), 러시아어, 스페인어, 영어 자동 감지 현지화를 처리하기 위한 구현 계획을 작성했습니다.
+
+작성된 상세 계획은 아티팩트 [implementation_plan.md](file:///home/rheehoselenovo2/.gemini/antigravity-ide/brain/1910879e-0c3d-48de-9f9e-6e12819a70de/implementation_plan.md)를 참고해 주시기 바랍니다.
+
+### 📋 핵심 요약
+1. **다크 모드 자동 지원**: 
+   - CSS 변수(Custom Properties)와 `@media (prefers-color-scheme: dark)`를 활용하여 시스템 테마가 변경될 때 즉각 테마가 전환되도록 `index.css`를 전면 개편합니다.
+   - `main.js` 내 Chart.js 렌더링 시에도 JavaScript의 미디어 쿼리 리스너(`prefers-color-scheme: dark`)를 연동하여 시스템 테마 전환 시 차트 글씨 색상 및 그리드 테두리 색상도 자동으로 실시간 갱신되도록 처리합니다.
+2. **다국어 자동 감지 및 현지화**:
+   - UI에 별도 언어 전환 토글 버튼을 두지 않고, `navigator.language`를 감지하여 시스템 기본 설정 언어(한국어, 일본어, 중국어 간체, 중국어 번체/대만, 러시아어, 스페인어, 영어 등)를 자동으로 UI 요소에 일괄 번역 적용합니다.
+   - 아이콘(SVG)이 텍스트 변경 과정에서 손실되지 않도록 HTML의 텍스트 영역을 `<span>` 태그와 `data-i18n` 어트리뷰트 구조로 깔끔히 정비합니다.
+3. **커밋 메시지 형식**:
+   - 앞으로 진행할 커밋은 요청하신 대로 **`영어 접두어: 한국어 설명`** (예: `Feat: 다크모드 및 다국어 지원 추가`) 형식으로 커밋을 작성합니다.
+
+이 구현 계획을 승인(진행 요청)해 주시면 즉시 개발에 착수하도록 하겠습니다. 확인 후 피드백을 부탁드립니다!
+
+### User Input
+
+
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Viewed [index.html](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/index.html) *
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Viewed [main.js](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/main.js) *
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Edited relevant file*
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Viewed [index.css](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/index.css) *
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*User accepted the command `npm run build`*
+
+*User accepted the command `venv/bin/python test_basic.py`*
+
+*User accepted the command `git status`*
+
+*User accepted the command `git add src/i18n.js index.html src/index.css src/main.js`*
+
+*User accepted the command `git status`*
+
+*User accepted the command `git commit -m "Feat: 다크모드 및 시스템 감지형 다국어(7개국어) 자동 번역 지원 추가"`*
+
+*Viewed [walkthrough.md](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/walkthrough.md) *
+
+*Edited relevant file*
+
+*User accepted the command `git status`*
+
+*User accepted the command `git add walkthrough.md && git commit -m "Docs: walkthrough.md에 다크모드 및 다국어 지원 설계 기술"`*
+
+*Edited relevant file*
+
+### Planner Response
+
+요청하신 기능들의 개발 및 최종 커밋을 모두 완료했습니다.
+
+### 🌟 구현된 핵심 기능
+
+1. **자동 테마 감지형 다크 모드 (CSS & JS)**
+   - [index.css](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/src/index.css)에 CSS 변수(Custom Properties) 및 `@media (prefers-color-scheme: dark)` 미디어 쿼리를 지정하여, 브라우저/OS의 다크 모드 설정에 맞춰 자동으로 테마가 실시간 전환됩니다.
+   - [main.js](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/src/main.js) 내 Chart.js 설정 또한 동적 감지 로직을 추가하여 다크 모드에 맞춰 차트의 텍스트 색상, 눈금선(Grid), 테두리 색상 등이 즉각 조율됩니다.
+   - 브라우저를 켜둔 상태에서 테마를 라이트/다크 모드로 전환하더라도 **새로고침 없이 차트 구성요소와 캔버스가 실시간으로 재렌더링**됩니다.
+   
+2. **시스템 설정 기반 다국어 자동 번역 지원 (7개 국어)**
+   - 신규 다국어 리소스 모듈 [i18n.js](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/src/i18n.js)을 생성하여 **한국어, 일본어, 중국어(간체), 중국어(번체/대만), 러시아어, 스페인어, 영어**의 UI 텍스트 사전을 수립했습니다.
+   - [index.html](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/index.html) 내의 번역 대상 요소들에 `data-i18n` 태그를 도입하고, 텍스트가 번역되어도 UI 아이콘(SVG) 구조가 훼손되지 않도록 `<span>` 래퍼 태그로 보호 조치했습니다.
+   - 번역 선택 UI 없이 `navigator.language`를 즉시 분석하여, 사용자의 시스템 언어로 텍스트 및 로더(Loader), 차트 설명(Tooltip), 리포지토리 목록 테이블 등 모든 곳을 유기적으로 현지화합니다.
+   
+3. **요청 준수 및 검증 완료**
+   - **커밋 메시지 형식**: 요청하신 지침에 따라 영어 접두어와 한국어 메시지 포맷(`Feat: 다크모드 및 시스템 감지형 다국어(7개국어) 자동 번역 지원 추가`, `Docs: walkthrough.md에 다크모드 및 다국어 지원 설계 기술`)을 엄격히 적용하여 Git 커밋을 처리했습니다.
+   - **빌드 테스트**: `npm run build`를 통과하여 정상적으로 컴파일 및 리패키징 됨을 완벽하게 검증했습니다.
+   - **테스트 통과**: `test_basic.py`를 실행하여 5/5 전체 테스트의 안정적인 무결성을 입증했습니다.
+
+배포 시 Vercel이 수정한 설정 내용에 맞춰 완벽한 다국어/다크모드 분석 대시보드를 안정적으로 제공할 것입니다. 관련한 추가 피드백 사항이 있으시면 언제든지 편하게 편하게 요청해 주세요!
