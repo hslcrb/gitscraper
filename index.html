@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- SEO tags -->
-  <title>GitHub Profile Analyzer - WASM Web Dashboard</title>
+  <title data-i18n="meta_title">GitHub Profile Analyzer - WASM Web Dashboard</title>
   <meta name="description" content="A powerful WebAssembly (Pyodide) powered GitHub Profile Analyzer in the browser. Scraping commits, size, stars, forks and language distributions directly without backend servers.">
   <meta name="keywords" content="github, profile, analyzer, webassembly, wasm, pyodide, scraper, dashboard">
   <meta name="author" content="Antigravity">
@@ -25,11 +25,11 @@
       <div class="logo-container">
         <img class="logo-icon" src="/assets/octocat.svg" alt="Octocat logo">
       </div>
-      <h1>GitHub Profile Analyzer</h1>
-      <p>Secure client-side analysis running Python inside WebAssembly</p>
-      <div class="wasm-badge">WASM (Pyodide) Active</div>
+      <h1 data-i18n="header_title">GitHub Profile Analyzer</h1>
+      <p data-i18n="header_subtitle">Secure client-side analysis running Python inside WebAssembly</p>
+      <div class="wasm-badge" data-i18n="badge_wasm">WASM (Pyodide) Active</div>
     </header>
-
+ 
     <!-- Configuration Panel -->
     <main class="config-panel" id="configPanel">
       <form id="analyzerForm">
@@ -41,82 +41,82 @@
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
               </svg>
-              GitHub Username
+              <span data-i18n="github_username">GitHub Username</span>
             </label>
             <div class="input-wrapper">
               <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
               </svg>
-              <input type="text" id="usernameInput" placeholder="e.g. octocat or https://github.com/octocat" required>
+              <input type="text" id="usernameInput" data-i18n="username_placeholder" placeholder="e.g. octocat or https://github.com/octocat" required>
             </div>
           </div>
-
+ 
           <!-- Repository Scope Selector -->
           <div class="form-group">
             <label>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.008 1.24l.885 1.77a2.25 2.25 0 0 0 2.007 1.24h1.98a2.25 2.25 0 0 0 2.007-1.24l.885-1.77a2.25 2.25 0 0 1 2.007-1.24h3.86m-18 0h18" />
               </svg>
-              Repository Scope
+              <span data-i18n="repo_scope">Repository Scope</span>
             </label>
             <div class="scope-selector">
               <label class="scope-option">
                 <input type="radio" name="repo_type" value="all" checked>
-                <div class="scope-card">All Repos</div>
+                <div class="scope-card" data-i18n="scope_all">All Repos</div>
               </label>
               <label class="scope-option">
                 <input type="radio" name="repo_type" value="public">
-                <div class="scope-card">Public Only</div>
+                <div class="scope-card" data-i18n="scope_public">Public Only</div>
               </label>
               <label class="scope-option">
                 <input type="radio" name="repo_type" value="private">
-                <div class="scope-card">Private Only</div>
+                <div class="scope-card" data-i18n="scope_private">Private Only</div>
               </label>
             </div>
           </div>
-
+ 
           <!-- Token Input -->
           <div class="form-group full-width">
             <label for="tokenInput">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-.999.43-1.563A6 6 0 1 1 21.75 8.25Z" />
               </svg>
-              GitHub Personal Access Token (Optional)
+              <span data-i18n="token_label">GitHub Personal Access Token (Optional)</span>
             </label>
             <div class="input-wrapper">
               <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
               </svg>
-              <input type="password" id="tokenInput" placeholder="Paste GITHUB_TOKEN (Recommended for private repos & rate-limits)">
+              <input type="password" id="tokenInput" data-i18n="token_placeholder" placeholder="Paste GITHUB_TOKEN (Recommended for private repos & rate-limits)">
               <button type="button" class="toggle-password" id="toggleToken" aria-label="Toggle token visibility">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
               </button>
             </div>
           </div>
-
+ 
         </div>
-
+ 
         <button type="submit" class="submit-btn" id="submitBtn">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.64 8.38l-1.42 1.42m8.79-1.42L9.64 8.38M9.64 8.38a14.98 14.98 0 0 0-6.16 12.12A14.98 14.98 0 0 0 15.59 14.37M9.64 8.38L8.22 9.8m0 0H3.75v4.5H8.22M8.22 9.8V14.3h4.5" />
           </svg>
-          Start WASM Profile Analysis
+          <span data-i18n="btn_submit">Start WASM Profile Analysis</span>
         </button>
-
+ 
         <!-- Security Notice -->
         <div class="security-notice">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
           </svg>
           <div>
-            <h4>Client-side Security Model</h4>
-            <p>Your token is processed strictly in WebAssembly memory in your browser. No data is stored, cached, or sent to any server other than the official GitHub API.</p>
+            <h4 data-i18n="security_title">Client-side Security Model</h4>
+            <p data-i18n="security_desc">Your token is processed strictly in WebAssembly memory in your browser. No data is stored, cached, or sent to any server other than the official GitHub API.</p>
           </div>
         </div>
       </form>
     </main>
-
+ 
     <!-- Status Panel (Loading Overlay) -->
     <section class="status-panel" id="statusPanel">
       <div class="spinner-container">
@@ -124,26 +124,26 @@
         <div class="spinner-inner"></div>
         <div class="spinner-percent" id="spinnerPercent">0%</div>
       </div>
-      <h3 class="status-title">Analyzing GitHub Profile...</h3>
-      <p class="status-desc" id="statusMessage">Initializing Python environment inside WebAssembly. This may take a few seconds on first load.</p>
+      <h3 class="status-title" data-i18n="status_title">Analyzing GitHub Profile...</h3>
+      <p class="status-desc" id="statusMessage" data-i18n="status_init">Initializing Python environment inside WebAssembly. This may take a few seconds on first load.</p>
       
       <!-- Live steps tracker -->
       <div class="progress-steps">
         <div class="step-item pending" id="stepLoadPyodide">
           <div class="step-icon"></div>
-          <span class="step-text">Loading Pyodide WASM Runtime...</span>
+          <span class="step-text" data-i18n="step_load_pyodide">Loading Pyodide WASM Runtime...</span>
         </div>
         <div class="step-item pending" id="stepInitPython">
           <div class="step-icon"></div>
-          <span class="step-text">Instantiating Python environment...</span>
+          <span class="step-text" data-i18n="step_init_python">Instantiating Python environment...</span>
         </div>
         <div class="step-item pending" id="stepFetchRepos">
           <div class="step-icon"></div>
-          <span class="step-text">Fetching user repositories...</span>
+          <span class="step-text" data-i18n="step_fetch_repos">Fetching user repositories...</span>
         </div>
         <div class="step-item pending" id="stepAnalyze">
           <div class="step-icon"></div>
-          <span class="step-text">Running statistical engine in Python (WASM)...</span>
+          <span class="step-text" data-i18n="step_analyze">Running statistical engine in Python (WASM)...</span>
         </div>
       </div>
     </section>
@@ -164,16 +164,16 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
-            Export JSON
+            <span data-i18n="btn_export_json">Export JSON</span>
           </button>
           <button class="btn-secondary" id="exportPdf">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.617 0-1.11-.479-1.12-1.095L5.879 18m11.782 0a41.33 41.33 0 0 1-11.782 0m11.782 0a9 9 0 0 0-11.782 0M15 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             </svg>
-            Save PDF
+            <span data-i18n="btn_save_pdf">Save PDF</span>
           </button>
           <button class="btn-secondary" id="resetBtn" style="border-color: rgba(239,68,68,0.2); color: #ef4444;">
-            Analyze Another
+            <span data-i18n="btn_analyze_another">Analyze Another</span>
           </button>
         </div>
       </div>
@@ -187,7 +187,7 @@
             </svg>
           </div>
           <div class="stat-content">
-            <h3>Repositories</h3>
+            <h3 data-i18n="stat_repos">Repositories</h3>
             <div class="stat-val" id="statTotalRepos">0</div>
           </div>
         </div>
@@ -198,7 +198,7 @@
             </svg>
           </div>
           <div class="stat-content">
-            <h3>Total Commits</h3>
+            <h3 data-i18n="stat_commits">Total Commits</h3>
             <div class="stat-val" id="statTotalCommits">0</div>
           </div>
         </div>
@@ -209,7 +209,7 @@
             </svg>
           </div>
           <div class="stat-content">
-            <h3>Total Stars</h3>
+            <h3 data-i18n="stat_stars">Total Stars</h3>
             <div class="stat-val" id="statTotalStars">0</div>
           </div>
         </div>
@@ -220,7 +220,7 @@
             </svg>
           </div>
           <div class="stat-content">
-            <h3>Total Forks</h3>
+            <h3 data-i18n="stat_forks">Total Forks</h3>
             <div class="stat-val" id="statTotalForks">0</div>
           </div>
         </div>
@@ -231,7 +231,7 @@
             </svg>
           </div>
           <div class="stat-content">
-            <h3>Primary Language</h3>
+            <h3 data-i18n="stat_lang">Primary Language</h3>
             <div class="stat-val" id="statPrimaryLang">-</div>
           </div>
         </div>
@@ -242,7 +242,7 @@
             </svg>
           </div>
           <div class="stat-content">
-            <h3>Code Size</h3>
+            <h3 data-i18n="stat_size">Code Size</h3>
             <div class="stat-val" id="statCodeSize">0 MB</div>
           </div>
         </div>
@@ -257,7 +257,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
             </svg>
-            Code Size by Language (Top 10, MB)
+            <span data-i18n="chart_lang_title">Code Size by Language (Top 10, MB)</span>
           </h3>
           <div class="chart-wrapper">
             <canvas id="chartLanguage"></canvas>
@@ -270,7 +270,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.625c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 3 18.75v-5.625ZM18 14.25c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 18 18.75v-4.5ZM10.5 11.25c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v7.5c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125v-7.5Z" />
             </svg>
-            Commits per Repository (Top 10)
+            <span data-i18n="chart_commits_title">Commits per Repository (Top 10)</span>
           </h3>
           <div class="chart-wrapper">
             <canvas id="chartCommits"></canvas>
@@ -283,7 +283,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
             </svg>
-            Popularity Statistics (Stars & Forks, Top 10)
+            <span data-i18n="chart_popularity_title">Popularity Statistics (Stars & Forks, Top 10)</span>
           </h3>
           <div class="chart-wrapper">
             <canvas id="chartPopularity"></canvas>
@@ -296,7 +296,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
-            Visibility Breakdown
+            <span data-i18n="chart_visibility_title">Visibility Breakdown</span>
           </h3>
           <div class="chart-wrapper">
             <canvas id="chartRepoType"></canvas>
@@ -312,23 +312,23 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-3.75 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
             </svg>
-            Detailed Repository Directory
+            <span data-i18n="table_title">Detailed Repository Directory</span>
           </h3>
           <div class="search-filter-wrapper">
-            <input type="text" id="repoSearch" class="search-input" placeholder="Search by name or language...">
+            <input type="text" id="repoSearch" class="search-input" data-i18n="table_search_placeholder" placeholder="Search by name or language...">
           </div>
         </div>
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Repository</th>
-                <th>Scope</th>
-                <th>Commits</th>
-                <th>Stars</th>
-                <th>Forks</th>
-                <th>Language</th>
-                <th>Updated</th>
+                <th data-i18n="table_col_repo">Repository</th>
+                <th data-i18n="table_col_scope">Scope</th>
+                <th data-i18n="table_col_commits">Commits</th>
+                <th data-i18n="table_col_stars">Stars</th>
+                <th data-i18n="table_col_forks">Forks</th>
+                <th data-i18n="table_col_lang">Language</th>
+                <th data-i18n="table_col_updated">Updated</th>
               </tr>
             </thead>
             <tbody id="repoTableBody">
@@ -342,7 +342,7 @@
 
     <!-- Footer -->
     <footer>
-      <p>&copy; 2026 GitHub Profile Analyzer. WebAssembly-powered secure tool.</p>
+      <p data-i18n="footer_text">&copy; 2026 GitHub Profile Analyzer. WebAssembly-powered secure tool.</p>
     </footer>
 
   </div>

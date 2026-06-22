@@ -1,9 +1,37 @@
 import wasmAnalyzerCode from './wasm_analyzer.py?raw';
+import { getLanguage, translate } from './i18n.js';
 
 // Global state
 let analysisData = null;
 let charts = {};
 let pyodideInstance = null;
+const currentLang = getLanguage();
+
+// Translate all elements with data-i18n
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const text = translate(key, currentLang);
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      el.placeholder = text;
+    } else {
+      el.textContent = text;
+    }
+  });
+  document.title = translate('meta_title', currentLang);
+}
+applyTranslations();
+
+// Get theme colors for Chart.js based on current prefers-color-scheme
+function getChartColors() {
+  const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return {
+    grid: isDark ? '#30363d' : '#e1e4e8',
+    text: isDark ? '#c9d1d9' : '#24292f',
+    textSecondary: isDark ? '#8b949e' : '#57606a',
+    border: isDark ? '#161b22' : '#ffffff'
+  };
+}
 
 // Initialize elements
 const configPanel = document.getElementById('configPanel');
@@ -61,7 +89,7 @@ form.addEventListener('submit', async (e) => {
   const repoType = document.querySelector('input[name="repo_type"]:checked').value;
   
   if (!username) {
-    alert('Please enter a GitHub Username');
+    alert(translate('alert_empty_username', currentLang));
     return;
   }
   
@@ -82,7 +110,7 @@ form.addEventListener('submit', async (e) => {
   try {
     // 1. Fetch user avatar/details from GitHub API directly (to show immediate preview)
     let avatarUrl = 'https://github.com/identicons/github.png';
-    let userBio = 'GitHub Developer';
+    let userBio = translate('default_bio', currentLang);
     let userFullName = username;
     
     try {
@@ -94,7 +122,7 @@ form.addEventListener('submit', async (e) => {
       if (uRes.ok) {
         const uData = await uRes.json();
         avatarUrl = uData.avatar_url;
-        userBio = uData.bio || 'No bio provided';
+        userBio = uData.bio || translate('default_bio', currentLang);
         userFullName = uData.name || username;
       }
     } catch (e) {
@@ -129,7 +157,11 @@ form.addEventListener('submit', async (e) => {
     const progressCallback = (current, total, repoName) => {
       const pct = Math.min(50 + Math.floor((current / total) * 45), 95);
       spinnerPercent.textContent = `${pct}%`;
-      setStepState(stepFetchRepos, 'active', `Scraping: ${repoName} (${current}/${total})`);
+      const progressText = translate('scraping_progress', currentLang)
+        .replace('{repoName}', repoName)
+        .replace('{current}', current)
+        .replace('{total}', total);
+      setStepState(stepFetchRepos, 'active', progressText);
     };
     
     // Expose Javascript function to Pyodide
@@ -164,7 +196,7 @@ json_res
     
     // Completed successfully
     spinnerPercent.textContent = '100%';
-    setStepState(stepFetchRepos, 'completed', 'Fetched repositories successfully');
+    setStepState(stepFetchRepos, 'completed', translate('fetched_success', currentLang));
     setStepState(stepAnalyze, 'completed');
     
     // Render Dashboard
@@ -207,9 +239,11 @@ function renderCharts(data) {
   const stats = data.statistics;
   const repos = data.repositories;
   
-  // Destory old charts if they exist
+  // Destroy old charts if they exist
   Object.values(charts).forEach(chart => chart.destroy());
   charts = {};
+  
+  const colors = getChartColors();
   
   // 1. Language Distribution
   const langLabels = Object.keys(stats.language_distribution).slice(0, 10);
@@ -227,7 +261,7 @@ function renderCharts(data) {
           '#ffe066', '#8c959f', '#d0d7de', '#afb8c1', '#24292f'
         ],
         borderWidth: 1,
-        borderColor: '#ffffff'
+        borderColor: colors.border
       }]
     },
     options: {
@@ -237,7 +271,7 @@ function renderCharts(data) {
         legend: {
           position: 'right',
           labels: { 
-            color: '#24292f', 
+            color: colors.text, 
             font: { 
               family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' 
             } 
@@ -263,7 +297,7 @@ function renderCharts(data) {
     data: {
       labels: repoNames,
       datasets: [{
-        label: 'Commits',
+        label: translate('chart_label_commits', currentLang),
         data: repoCommits,
         backgroundColor: 'rgba(46, 164, 79, 0.7)',
         borderColor: '#2ea44f',
@@ -275,16 +309,16 @@ function renderCharts(data) {
       maintainAspectRatio: false,
       scales: {
         y: { 
-          grid: { color: '#e1e4e8' }, 
+          grid: { color: colors.grid }, 
           ticks: { 
-            color: '#57606a',
+            color: colors.textSecondary,
             font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }
           } 
         },
         x: { 
           grid: { display: false }, 
           ticks: { 
-            color: '#57606a', 
+            color: colors.textSecondary, 
             maxRotation: 45, 
             minRotation: 45,
             font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }
@@ -310,14 +344,14 @@ function renderCharts(data) {
       labels: starRepoNames,
       datasets: [
         {
-          label: 'Stars',
+          label: translate('chart_label_stars', currentLang),
           data: repoStars,
           backgroundColor: 'rgba(9, 105, 218, 0.7)',
           borderColor: '#0969da',
           borderWidth: 1
         },
         {
-          label: 'Forks',
+          label: translate('chart_label_forks', currentLang),
           data: repoForks,
           backgroundColor: 'rgba(46, 164, 79, 0.7)',
           borderColor: '#2ea44f',
@@ -330,16 +364,16 @@ function renderCharts(data) {
       maintainAspectRatio: false,
       scales: {
         y: { 
-          grid: { color: '#e1e4e8' }, 
+          grid: { color: colors.grid }, 
           ticks: { 
-            color: '#57606a',
+            color: colors.textSecondary,
             font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }
           } 
         },
         x: { 
           grid: { display: false }, 
           ticks: { 
-            color: '#57606a', 
+            color: colors.textSecondary, 
             maxRotation: 45, 
             minRotation: 45,
             font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }
@@ -349,7 +383,7 @@ function renderCharts(data) {
       plugins: {
         legend: { 
           labels: { 
-            color: '#24292f',
+            color: colors.text,
             font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }
           } 
         }
@@ -362,12 +396,12 @@ function renderCharts(data) {
   charts.repoType = new Chart(typeCtx, {
     type: 'doughnut',
     data: {
-      labels: ['Public', 'Private'],
+      labels: [translate('badge_public', currentLang), translate('badge_private', currentLang)],
       datasets: [{
         data: [stats.public_repositories, stats.private_repositories],
         backgroundColor: ['#2ea44f', '#cf222e'],
         borderWidth: 1,
-        borderColor: '#ffffff'
+        borderColor: colors.border
       }]
     },
     options: {
@@ -377,7 +411,7 @@ function renderCharts(data) {
         legend: {
           position: 'bottom',
           labels: { 
-            color: '#24292f',
+            color: colors.text,
             font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }
           }
         }
@@ -395,8 +429,8 @@ function renderTable(repositories) {
     const tr = document.createElement('tr');
     
     const typeBadge = repo.private 
-      ? `<span class="badge private">Private</span>` 
-      : `<span class="badge public">Public</span>`;
+      ? `<span class="badge private">${translate('badge_private', currentLang)}</span>` 
+      : `<span class="badge public">${translate('badge_public', currentLang)}</span>`;
       
     const langBadge = repo.language && repo.language !== 'N/A'
       ? `<span class="badge lang">${repo.language}</span>`
@@ -450,4 +484,11 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   dashboard.style.display = 'none';
   configPanel.style.display = 'block';
   form.reset();
+});
+
+// Watch prefers-color-scheme dynamically to update charts color schemes in real-time
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (analysisData) {
+    renderCharts(analysisData);
+  }
 });
