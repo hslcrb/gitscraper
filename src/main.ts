@@ -1,11 +1,16 @@
 import { getLanguage, translate } from './i18n.ts';
-import { analyzeProfile } from './analyzer.ts';
+import * as Comlink from 'comlink';
+import type { WorkerAPI } from './worker.ts';
 
 declare let Chart: any;
 
 // Global state
 let analysisData: any = null;
 let charts: { [key: string]: any } = {};
+
+// Spawn Web Worker for offloading scraping computation
+const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
+const api = Comlink.wrap<WorkerAPI>(worker);
 
 // Initialize elements
 const configPanel = document.getElementById('configPanel') as HTMLElement;
@@ -84,7 +89,6 @@ form.addEventListener('submit', async (e) => {
   
   const usernameInput = (document.getElementById('usernameInput') as HTMLInputElement).value.trim();
   let username = usernameInput;
-  // Extract username if URL is pasted
   if (username.includes('github.com')) {
     username = username.replace(/\/$/, '').split('/').pop() || '';
   }
@@ -98,12 +102,10 @@ form.addEventListener('submit', async (e) => {
     return;
   }
   
-  // Show loading panel
   configPanel.style.display = 'none';
   statusPanel.style.display = 'flex';
   dashboard.style.display = 'none';
   
-  // Reset steps
   setStepState(stepLoadPyodide, 'active');
   setStepState(stepInitPython, 'pending');
   setStepState(stepFetchRepos, 'pending');
@@ -112,8 +114,8 @@ form.addEventListener('submit', async (e) => {
   const spinnerPercent = document.getElementById('spinnerPercent') as HTMLElement;
   spinnerPercent.textContent = '0%';
   
+  let proxyCallback: any = null;
   try {
-    // 1. Fetch user avatar/details from GitHub API directly (to show immediate preview)
     let avatarUrl = 'https://github.com/identicons/github.png';
     let userBio = translate('default_bio', currentLang);
     let userFullName = username;
@@ -134,12 +136,10 @@ form.addEventListener('submit', async (e) => {
       console.warn('Failed to fetch user preview avatar', e);
     }
     
-    // Set preview details
     (document.getElementById('userAvatar') as HTMLImageElement).src = avatarUrl;
     (document.getElementById('userBio') as HTMLElement).textContent = userBio;
     (document.getElementById('userFullName') as HTMLElement).textContent = userFullName;
     
-    // 2. Complete setup steps immediately since WASM is bypassed
     spinnerPercent.textContent = '15%';
     setStepState(stepLoadPyodide, 'completed');
     
@@ -148,8 +148,8 @@ form.addEventListener('submit', async (e) => {
     
     setStepState(stepFetchRepos, 'active');
     
-    // 3. Run TypeScript Analysis with progress callback
-    const progressCallback = (current: number, total: number, repoName: string) => {
+    // Create Comlink proxy callback to allow progress tracking across Worker boundary
+    proxyCallback = Comlink.proxy((current: number, total: number, repoName: string) => {
       const pct = Math.min(30 + Math.floor((current / total) * 65), 98);
       spinnerPercent.textContent = `${pct}%`;
       const progressText = translate('scraping_progress', currentLang)
@@ -157,35 +157,37 @@ form.addEventListener('submit', async (e) => {
         .replace('{current}', current.toString())
         .replace('{total}', total.toString());
       setStepState(stepFetchRepos, 'active', progressText);
-    };
+    });
 
     setStepState(stepAnalyze, 'active');
     
-    const result = await analyzeProfile(username, token, repoType, progressCallback);
+    // Run analyzer inside Web Worker thread
+    const result = await api.analyzeProfile(username, token, repoType, proxyCallback);
     analysisData = result;
     
     if (analysisData.error) {
       throw new Error(analysisData.error);
     }
     
-    // Completed successfully
     spinnerPercent.textContent = '100%';
     setStepState(stepFetchRepos, 'completed', translate('fetched_success', currentLang));
     setStepState(stepAnalyze, 'completed');
     
-    // Render Dashboard
     renderDashboard(analysisData);
     
-    // Display dashboard
     statusPanel.style.display = 'none';
     dashboard.style.display = 'block';
     
   } catch (err: any) {
     console.error(err);
     alert(`Error: ${err.message || err}`);
-    // Return to config panel
     statusPanel.style.display = 'none';
     configPanel.style.display = 'block';
+  } finally {
+    // Release proxy memory reference to prevent leakage in Web Worker bridge
+    if (proxyCallback) {
+      proxyCallback[Comlink.releaseProxy]();
+    }
   }
 });
 
@@ -193,7 +195,6 @@ form.addEventListener('submit', async (e) => {
 function renderDashboard(data: any) {
   const stats = data.statistics;
   
-  // Set stats counters
   (document.getElementById('statTotalRepos') as HTMLElement).textContent = stats.total_repositories;
   (document.getElementById('statTotalCommits') as HTMLElement).textContent = Number(stats.total_commits).toLocaleString();
   (document.getElementById('statTotalStars') as HTMLElement).textContent = Number(stats.total_stars).toLocaleString();
@@ -201,19 +202,15 @@ function renderDashboard(data: any) {
   (document.getElementById('statPrimaryLang') as HTMLElement).textContent = stats.primary_language;
   (document.getElementById('statCodeSize') as HTMLElement).textContent = `${stats.total_size_mb} MB`;
   
-  // Render charts
   renderCharts(data);
-  
-  // Render table
   renderTable(data.repositories);
 }
 
-// Chart Rendering
+// Chart Rendering with custom tooltips (adding 2 decimal percentage display)
 function renderCharts(data: any) {
   const stats = data.statistics;
   const repos = data.repositories;
   
-  // Destroy old charts if they exist
   Object.values(charts).forEach(chart => chart.destroy());
   charts = {};
   
@@ -253,7 +250,13 @@ function renderCharts(data: any) {
         },
         tooltip: {
           callbacks: {
-            label: (context: any) => ` ${context.label}: ${context.raw} MB`
+            label: (context: any) => {
+              const dataset = context.dataset;
+              const total = dataset.data.reduce((acc: number, val: any) => acc + parseFloat(val), 0);
+              const value = parseFloat(context.raw);
+              const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : '0.00';
+              return ` ${context.label}: ${value} MB (${percentage}%)`;
+            }
           }
         }
       }
@@ -300,7 +303,18 @@ function renderCharts(data: any) {
         }
       },
       plugins: {
-        legend: { display: false }
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const dataset = context.dataset;
+              const total = dataset.data.reduce((acc: number, val: any) => acc + parseFloat(val), 0);
+              const value = parseFloat(context.raw);
+              const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : '0.00';
+              return ` ${context.label}: ${value} commits (${percentage}%)`;
+            }
+          }
+        }
       }
     }
   });
@@ -360,6 +374,17 @@ function renderCharts(data: any) {
             color: colors.text,
             font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }
           } 
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const dataset = context.dataset;
+              const total = dataset.data.reduce((acc: number, val: any) => acc + parseFloat(val), 0);
+              const value = parseFloat(context.raw);
+              const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : '0.00';
+              return ` ${context.dataset.label}: ${value} (${percentage}%)`;
+            }
+          }
         }
       }
     }
@@ -387,6 +412,17 @@ function renderCharts(data: any) {
           labels: { 
             color: colors.text,
             font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const dataset = context.dataset;
+              const total = dataset.data.reduce((acc: number, val: any) => acc + parseFloat(val), 0);
+              const value = parseFloat(context.raw);
+              const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : '0.00';
+              return ` ${context.label}: ${value} (${percentage}%)`;
+            }
           }
         }
       }

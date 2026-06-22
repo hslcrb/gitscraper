@@ -52,8 +52,26 @@ export interface AnalysisResult {
   username: string;
   repo_type: string;
   repositories: RepoInfo[];
+  forked_repositories: RepoInfo[];
   statistics?: ScraperStats;
+  forked_statistics?: ScraperStats;
   error?: string;
+}
+
+async function processChunked<T, R>(
+  items: T[],
+  chunkSize: number,
+  processor: (item: T, index: number) => Promise<R>
+): Promise<R[]> {
+  const results: R[] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    const chunk = items.slice(i, i + chunkSize);
+    const chunkResults = await Promise.all(
+      chunk.map((item, idx) => processor(item, i + idx))
+    );
+    results.push(...chunkResults);
+  }
+  return results;
 }
 
 export async function analyzeProfile(
@@ -127,45 +145,40 @@ export async function analyzeProfile(
     }
   }
 
-  // 3. Filter repositories (ignore forks, match repoType)
-  const filteredRepos = repos.filter((r) => {
-    if (r.fork) return false;
+  // Filter by privacy settings
+  const filteredReposRaw = repos.filter((r) => {
     const isPrivate = r.private || false;
     if (repoType === "public" && isPrivate) return false;
     if (repoType === "private" && !isPrivate) return false;
     return true;
   });
 
-  if (filteredRepos.length === 0) {
+  // Separate owned (non-fork) vs forked repositories
+  const ownedReposRaw = filteredReposRaw.filter((r) => !r.fork);
+  const forkedReposRaw = filteredReposRaw.filter((r) => r.fork);
+
+  if (ownedReposRaw.length === 0 && forkedReposRaw.length === 0) {
     return {
       username,
       repo_type: repoType,
-      error: "No repositories found matching criteria.",
-      repositories: []
+      repositories: [],
+      forked_repositories: [],
+      error: "No repositories found matching criteria."
     };
   }
 
-  // 4. Analyze each repository
-  const reposData: RepoInfo[] = [];
-  const totalReposCount = filteredRepos.length;
+  // 4. Analyze each repository using Parallel Chunking
+  let completedCount = 0;
+  const totalCount = ownedReposRaw.length + forkedReposRaw.length;
 
-  for (let idx = 0; idx < totalReposCount; idx++) {
-    const r = filteredRepos[idx];
+  const processRepo = async (r: any): Promise<RepoInfo> => {
     const repoName = r.name;
     const ownerLogin = r.owner?.login || username;
 
-    if (progressCallback) {
-      try {
-        progressCallback(idx + 1, totalReposCount, repoName);
-      } catch (e) {
-        // ignore callback exceptions
-      }
-    }
-
-    // Fetch commit count
+    // Fetch commit count (filtering by author login so we only count author's commits)
     let commitCount = 0;
     try {
-      const commitsUrl = `https://api.github.com/repos/${ownerLogin}/${repoName}/commits?per_page=1`;
+      const commitsUrl = `https://api.github.com/repos/${ownerLogin}/${repoName}/commits?per_page=1&author=${encodeURIComponent(username)}`;
       const cRes = await apiFetch(commitsUrl);
       const linkHeader = cRes.headers.get("Link") || cRes.headers.get("link");
       if (linkHeader) {
@@ -199,22 +212,30 @@ export async function analyzeProfile(
         languages = await lRes.json();
       }
     } catch (e) {
-      // ignore language exceptions
+      // ignore
     }
 
-    // Parse date helper
+    completedCount++;
+    if (progressCallback) {
+      try {
+        progressCallback(completedCount, totalCount, repoName);
+      } catch (e) {
+        // ignore
+      }
+    }
+
     const parseDate = (dateStr: string | null): string | null => {
       if (!dateStr) return null;
       return dateStr.replace("Z", "").split("T")[0];
     };
 
-    reposData.push({
+    return {
       name: repoName,
       full_name: r.full_name,
       url: r.html_url,
       description: r.description || "No description",
       private: r.private || false,
-      fork: false,
+      fork: r.fork || false,
       stars: r.stargazers_count || 0,
       watchers: r.watchers_count || 0,
       forks: r.forks_count || 0,
@@ -231,97 +252,106 @@ export async function analyzeProfile(
       license: r.license?.name || null,
       default_branch: r.default_branch || "main",
       commit_count: commitCount
-    });
-  }
+    };
+  };
+
+  // Run chunks in parallel of 10
+  const ownedReposData = await processChunked(ownedReposRaw, 10, processRepo);
+  const forkedReposData = await processChunked(forkedReposRaw, 10, processRepo);
 
   // 5. Generate statistics
-  const totalCommits = reposData.reduce((acc, r) => acc + r.commit_count, 0);
-  const totalStars = reposData.reduce((acc, r) => acc + r.stars, 0);
-  const totalWatchers = reposData.reduce((acc, r) => acc + r.watchers, 0);
-  const totalForks = reposData.reduce((acc, r) => acc + r.forks, 0);
-  const totalIssues = reposData.reduce((acc, r) => acc + r.open_issues, 0);
-  const totalSize = reposData.reduce((acc, r) => acc + r.size, 0);
+  function generateStats(reposData: RepoInfo[]): ScraperStats {
+    const totalCommits = reposData.reduce((acc, r) => acc + r.commit_count, 0);
+    const totalStars = reposData.reduce((acc, r) => acc + r.stars, 0);
+    const totalWatchers = reposData.reduce((acc, r) => acc + r.watchers, 0);
+    const totalForks = reposData.reduce((acc, r) => acc + r.forks, 0);
+    const totalIssues = reposData.reduce((acc, r) => acc + r.open_issues, 0);
+    const totalSize = reposData.reduce((acc, r) => acc + r.size, 0);
 
-  const publicReposCount = reposData.filter((r) => !r.private).length;
-  const privateReposCount = reposData.filter((r) => r.private).length;
+    const publicReposCount = reposData.filter((r) => !r.private).length;
+    const privateReposCount = reposData.filter((r) => r.private).length;
 
-  const languageStats: { [lang: string]: number } = {};
-  const languageRepoCount: { [lang: string]: number } = {};
+    const languageStats: { [lang: string]: number } = {};
+    const languageRepoCount: { [lang: string]: number } = {};
 
-  reposData.forEach((repo) => {
-    Object.entries(repo.languages).forEach(([lang, bytes]) => {
-      languageStats[lang] = (languageStats[lang] || 0) + bytes;
-      languageRepoCount[lang] = (languageRepoCount[lang] || 0) + 1;
+    reposData.forEach((repo) => {
+      Object.entries(repo.languages).forEach(([lang, bytes]) => {
+        languageStats[lang] = (languageStats[lang] || 0) + bytes;
+        languageRepoCount[lang] = (languageRepoCount[lang] || 0) + 1;
+      });
     });
-  });
 
-  const sortedLanguages = Object.entries(languageStats).sort((a, b) => b[1] - a[1]);
+    const sortedLanguages = Object.entries(languageStats).sort((a, b) => b[1] - a[1]);
 
-  // Calculate update recency
-  let recentlyUpdatedCount = 0;
-  let activeReposCount = 0;
-  const now = new Date();
+    let recentlyUpdatedCount = 0;
+    let activeReposCount = 0;
+    const now = new Date();
 
-  reposData.forEach((repo) => {
-    if (repo.updated_at) {
-      try {
-        const dt = new Date(repo.updated_at);
-        const diffTime = Math.abs(now.getTime() - dt.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (diffDays <= 30) {
-          recentlyUpdatedCount++;
+    reposData.forEach((repo) => {
+      if (repo.updated_at) {
+        try {
+          const dt = new Date(repo.updated_at);
+          const diffTime = Math.abs(now.getTime() - dt.getTime());
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          if (diffDays <= 30) {
+            recentlyUpdatedCount++;
+          }
+          if (diffDays <= 90) {
+            activeReposCount++;
+          }
+        } catch (e) {
+          // ignore
         }
-        if (diffDays <= 90) {
-          activeReposCount++;
-        }
-      } catch (e) {
-        // ignore
       }
-    }
-  });
+    });
 
-  const licenseDistribution: { [lic: string]: number } = {};
-  reposData.forEach((repo) => {
-    const lic = repo.license || "No License";
-    licenseDistribution[lic] = (licenseDistribution[lic] || 0) + 1;
-  });
+    const licenseDistribution: { [lic: string]: number } = {};
+    reposData.forEach((repo) => {
+      const lic = repo.license || "No License";
+      licenseDistribution[lic] = (licenseDistribution[lic] || 0) + 1;
+    });
 
-  const formatDateTime = (d: Date): string => {
-    const pad = (n: number) => n.toString().padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  };
+    const formatDateTime = (d: Date): string => {
+      const pad = (n: number) => n.toString().padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    };
 
-  const stats: ScraperStats = {
-    total_repositories: reposData.length,
-    public_repositories: publicReposCount,
-    private_repositories: privateReposCount,
-    total_commits: totalCommits,
-    total_stars: totalStars,
-    total_watchers: totalWatchers,
-    total_forks: totalForks,
-    total_open_issues: totalIssues,
-    total_size_kb: totalSize,
-    total_size_mb: parseFloat((totalSize / 1024).toFixed(2)),
-    avg_commits_per_repo: parseFloat((totalCommits / reposData.length).toFixed(2)),
-    avg_stars_per_repo: parseFloat((totalStars / reposData.length).toFixed(2)),
-    avg_forks_per_repo: parseFloat((totalForks / reposData.length).toFixed(2)),
-    language_distribution: Object.fromEntries(sortedLanguages),
-    language_repo_count: Object.fromEntries(
-      Object.entries(languageRepoCount).sort((a, b) => b[1] - a[1])
-    ),
-    total_languages: Object.keys(languageStats).length,
-    primary_language: sortedLanguages.length > 0 ? sortedLanguages[0][0] : "N/A",
-    recently_updated_count: recentlyUpdatedCount,
-    active_repos_count: activeReposCount,
-    inactive_repos_count: reposData.length - activeReposCount,
-    license_distribution: licenseDistribution,
-    analysis_date: formatDateTime(now)
-  };
+    const reposLen = reposData.length || 1;
+
+    return {
+      total_repositories: reposData.length,
+      public_repositories: publicReposCount,
+      private_repositories: privateReposCount,
+      total_commits: totalCommits,
+      total_stars: totalStars,
+      total_watchers: totalWatchers,
+      total_forks: totalForks,
+      total_open_issues: totalIssues,
+      total_size_kb: totalSize,
+      total_size_mb: parseFloat((totalSize / 1024).toFixed(2)),
+      avg_commits_per_repo: parseFloat((totalCommits / reposLen).toFixed(2)),
+      avg_stars_per_repo: parseFloat((totalStars / reposLen).toFixed(2)),
+      avg_forks_per_repo: parseFloat((totalForks / reposLen).toFixed(2)),
+      language_distribution: Object.fromEntries(sortedLanguages),
+      language_repo_count: Object.fromEntries(
+        Object.entries(languageRepoCount).sort((a, b) => b[1] - a[1])
+      ),
+      total_languages: Object.keys(languageStats).length,
+      primary_language: sortedLanguages.length > 0 ? sortedLanguages[0][0] : "N/A",
+      recently_updated_count: recentlyUpdatedCount,
+      active_repos_count: activeReposCount,
+      inactive_repos_count: reposData.length - activeReposCount,
+      license_distribution: licenseDistribution,
+      analysis_date: formatDateTime(now)
+    };
+  }
 
   return {
     username,
     repo_type: repoType,
-    repositories: reposData,
-    statistics: stats
+    repositories: ownedReposData,
+    forked_repositories: forkedReposData,
+    statistics: generateStats(ownedReposData),
+    forked_statistics: generateStats(forkedReposData)
   };
 }
