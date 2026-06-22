@@ -52,6 +52,14 @@
   box-sizing: border-box;
 }
 
+::selection {
+  background-color: var(--accent-green-light);
+}
+
+::-moz-selection {
+  background-color: var(--accent-green-light);
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   background-color: var(--bg-primary);
@@ -677,5 +685,68 @@ footer {
 @media (max-width: 576px) {
   .scope-selector {
     grid-template-columns: 1fr;
+  }
+  .app-container {
+    padding: 16px 12px;
+  }
+  header h1 {
+    font-size: 1.6rem;
+  }
+  .config-panel {
+    padding: 16px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .user-profile-summary {
+    flex-direction: column;
+    text-align: center;
+  }
+  .actions-container {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .actions-container button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+  .table-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .search-filter-wrapper, .search-input {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Extra support for ultra narrow 320px screens */
+  .app-container {
+    padding: 12px 8px;
+  }
+  header h1 {
+    font-size: 1.35rem;
+  }
+  header p {
+    font-size: 0.85rem;
+  }
+  .wasm-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+  .chart-card {
+    padding: 12px;
+  }
+  .chart-wrapper {
+    height: 220px;
+  }
+  .table-section {
+    padding: 12px 8px;
   }
 }
