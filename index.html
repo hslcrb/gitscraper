@@ -5,10 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- SEO tags -->
-  <title data-i18n="meta_title">GitHub Profile Analyzer - WASM Web Dashboard</title>
-  <meta name="description" content="A powerful WebAssembly (Pyodide) powered GitHub Profile Analyzer in the browser. Scraping commits, size, stars, forks and language distributions directly without backend servers.">
-  <meta name="keywords" content="github, profile, analyzer, webassembly, wasm, pyodide, scraper, dashboard">
-  <meta name="author" content="Antigravity">
+  <title data-i18n="meta_title">GitHub Profile Analyzer - Web Dashboard</title>
+  <meta name="description" content="A powerful client-side GitHub Profile Analyzer. Instantly scrap and compute commits, code sizes, star distributions, and language metrics directly in your browser using TypeScript and Web Workers.">
+  <meta name="keywords" content="github, profile, analyzer, typescript, scraper, dashboard, developer metrics, secure client-side">
+  <meta name="author" content="hslcrb">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://gitscraper.vercel.app/">
+  <meta property="og:title" content="GitHub Profile Analyzer - Secure Client-Side Analytics">
+  <meta property="og:description" content="A secure client-side GitHub Profile Analyzer running entirely in the browser. Analyze commits, repository sizes, language byte distributions, and stars securely.">
+  <meta property="og:image" content="https://gitscraper.vercel.app/favicon.svg">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:url" content="https://gitscraper.vercel.app/">
+  <meta property="twitter:title" content="GitHub Profile Analyzer - Secure Client-Side Analytics">
+  <meta property="twitter:description" content="A secure client-side GitHub Profile Analyzer running entirely in the browser. Analyze commits, repository sizes, language byte distributions, and stars securely.">
+  <meta property="twitter:image" content="https://gitscraper.vercel.app/favicon.svg">
+
+  <!-- JSON-LD Structured Data for AEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "GitHub Profile Analyzer",
+    "url": "https://gitscraper.vercel.app",
+    "description": "Secure client-side GitHub Profile Analyzer running entirely in TypeScript and Web Workers. Instantly scrap and compute commits, code sizes, star distributions, and language metrics directly in your browser.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript. Requires Web Workers.",
+    "author": {
+      "@type": "Organization",
+      "name": "hslcrb"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Secure Client-side Analysis",
+      "No backend servers required",
+      "Commits, stars, forks, and language byte analysis",
+      "Excludes/separates forked repository metric pollution",
+      "Export reports in JSON or PDF formats",
+      "Fully localized translations (English, Korean, Japanese, Chinese, Russian, Spanish)"
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does the GitHub Profile Analyzer work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It runs entirely on the client side using TypeScript and Web Workers. It fetches repository metadata and commit details directly from the GitHub REST API and calculates statistics such as language byte distributions, commit counts, and repository popularity."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my GitHub Personal Access Token safe?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, your personal access token is processed strictly within your browser's memory and is only sent directly to the official GitHub API. No data is stored, cached, or transmitted to any third-party server."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why are forked repositories separated in the analysis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To prevent metric pollution. Forked repositories represent code you did not originate. The analyzer isolates forks to give an accurate, pure representation of your original contributions, while still listing them for reference."
+        }
+      }
+    ]
+  }
+  </script>
   
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
