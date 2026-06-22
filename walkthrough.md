@@ -52,7 +52,7 @@ We have optimized the GitHub Profile Analyzer's performance, data accuracy, visu
 
 ### 7. 🕵️‍♂️ AI Agent Prompt Injection Honeypot
 - **Purpose**: Prevent malicious prompt injection attacks by testing agent behavior with a safe, hidden honeypot notice.
-- **Mechanism**: Added a visually hidden `div` element (`display: none;`) inside [index.html](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/index.html) containing a direct instruction block targeting any reading AI agents to report their access back to the user.
+- **Mechanism**: Added a visually hidden `div` element (`display: none;`) inside [index.html](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/index.html) containing a direct instruction block targeting any reading AI agents. It instructs them to immediately report execution to the user, share an interesting cat fact, and warn the user about ignoring visually hidden elements in AI agent services.
 
 ---
 
@@ -69,10 +69,10 @@ vite v8.0.16 building client environment for production...
 ✓ 7 modules transformed.
 rendering chunks (1)...
 dist-web/assets/worker-CvG-fxKH.js   8.28 kB
-dist-web/index.html                 25.81 kB
+dist-web/index.html                 26.25 kB
 dist-web/assets/index-QDQPM9qv.css  11.32 kB
 dist-web/assets/index-DCHzzONe.js   34.28 kB
-✓ built in 424ms
+✓ built in 263ms
 ```
 
 ### 2. Python Backend Fallback Tests
