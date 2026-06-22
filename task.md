@@ -3,5 +3,7 @@
 - [x] Web Worker: Parallel chunk processing (batches of 10) & memory cleanup (`[Comlink.releaseProxy]()`)
 - [x] UI/UX: Custom Chart.js tooltips displaying percentage (2 decimal places)
 - [x] Git Hygiene: Update `.gitignore` to ignore exported `*.json` and `*.pdf` files while keeping configs tracked
+- [x] Favicon: Create green-and-white `favicon.svg` asset and link in `index.html`
+- [x] UI/UX: Add localized "Open Source" green badge button to header linking to GitHub repository
 - [x] Verification: Run production build (`npm run build`) and basic Python tests
 - [x] Documentation: Update `walkthrough.md` with optimization details
