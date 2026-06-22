@@ -5,5 +5,8 @@
 - [x] Git Hygiene: Update `.gitignore` to ignore exported `*.json` and `*.pdf` files while keeping configs tracked
 - [x] Favicon: Create green-and-white `favicon.svg` asset and link in `index.html`
 - [x] UI/UX: Add localized "Open Source" green badge button to header linking to GitHub repository
+- [x] SEO/AEO: Embed JSON-LD structured data for WebApplication & FAQPage in `index.html`
+- [x] SEO/AEO: Add robots.txt and sitemap.xml to index and crawl config
+- [x] Security: Add hidden AI Agent Prompt Injection Honeypot instructions to `index.html`
 - [x] Verification: Run production build (`npm run build`) and basic Python tests
 - [x] Documentation: Update `walkthrough.md` with optimization details

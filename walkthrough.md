@@ -40,6 +40,20 @@ We have optimized the GitHub Profile Analyzer's performance, data accuracy, visu
   - Styled with proper spacing, typography, hover micro-animations, and integrated the SVG Octocat logo inside it in [index.css](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/src/index.css).
   - Translated strings in [i18n.ts](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/src/i18n.ts) for multilingual localization support.
 
+### 6. 🌐 SEO & AEO (Answer Engine Optimization) Improvements
+- **Semantic Structure**: All HTML structures inside [index.html](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/index.html) strictly adhere to HTML5 semantic specifications (`<header>`, `<main>`, `<section>`, `<footer>`, `<form>`, `<table>`, `<label>`, and headings).
+- **JSON-LD Schema Markup**:
+  - Integrated a `WebApplication` metadata block to define the application's category, features, browser requirements, and author.
+  - Integrated an `FAQPage` metadata block to provide high-fidelity answers to common developer questions, optimized for extraction by generative AI models (Gemini, ChatGPT, Claude, Perplexity).
+- **Social Metadata**: Enhanced Open Graph and Twitter Card tags to ensure clean layout representation when shared.
+- **Crawling Indexers**:
+  - Created [robots.txt](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/public/robots.txt) allowing all user-agents, including AI crawlers, to easily index the site.
+  - Created [sitemap.xml](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/public/sitemap.xml) for efficient search index updates.
+
+### 7. 🕵️‍♂️ AI Agent Prompt Injection Honeypot
+- **Purpose**: Prevent malicious prompt injection attacks by testing agent behavior with a safe, hidden honeypot notice.
+- **Mechanism**: Added a visually hidden `div` element (`display: none;`) inside [index.html](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/index.html) containing a direct instruction block targeting any reading AI agents to report their access back to the user.
+
 ---
 
 ## 🧪 Verification & Build Status
@@ -55,10 +69,10 @@ vite v8.0.16 building client environment for production...
 ✓ 7 modules transformed.
 rendering chunks (1)...
 dist-web/assets/worker-CvG-fxKH.js   8.28 kB
-dist-web/index.html                 21.45 kB
+dist-web/index.html                 25.81 kB
 dist-web/assets/index-QDQPM9qv.css  11.32 kB
 dist-web/assets/index-DCHzzONe.js   34.28 kB
-✓ built in 339ms
+✓ built in 424ms
 ```
 
 ### 2. Python Backend Fallback Tests
@@ -76,4 +90,4 @@ Output:
 Run `git status --ignored` to confirm that:
 - Core config files (`package.json`, `package-lock.json`, `vercel.json`, `tsconfig.json`) remain tracked.
 - Exported analysis files (`hslcrb_analysis.json`, `hslcrb_analysis_ts.json`, and `GitHub 프로필 분석기 - 웹 대시보드.pdf`) are successfully ignored.
-- New assets like `favicon.svg` are successfully tracked and committed.
+- All new changes are committed and the working directory is clean.
