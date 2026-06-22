@@ -736,3 +736,184 @@ implementation_plan.md
 Vercel은 빌드 시작 단계에서 소스 파일을 스캔하여 프레임워크나 런타임을 자동 감지합니다. 이때 루트의 `requirements.txt` 등으로 인해 불필요한 Python 설치가 유발되었으나, `.vercelignore` 파일에 Python 관련 폴더 및 메타 파일들을 배제 처리함으로써 Vercel이 **순수 NodeJS(Vite + TypeScript) 정적 웹 서비스 프로젝트로만 인식하고 신속히 빌드하도록 차단**했습니다.
 
 이제 새로 배포해 보시거나 배포 파이프라인을 재동작시키시면 파이썬 의존성 설치 과정 없이 Vite 정적 빌드만 빠르게 진행되어 즉각 배포가 완료될 것입니다!
+
+### User Input
+
+pdf와 json은 gitignore 시켜라. 또한 # Role
+너는 고성능 프론트엔드 최적화 전문 시니어 엔지니어다. GitHub 프로필 분석 웹 애플리케이션의 성능 최적화와 데이터 정확도 개선을 수행한다.
+
+# Context
+- 현재 GitHub API로 가져온 레포지토리 메타데이터(500+개)를 분석하여 TypeScript 기반으로 대시보드를 렌더링 중임.
+- 현재 문제점: 
+  1. 포크된 레포의 커밋 수까지 합산되어 데이터가 오염됨.
+  2. 대용량 JSON 파싱 및 차트 데이터 계산 시 메인 스레드가 차단됨.
+  3. 차트 툴팁에 소수점 2자리 백분율 정보가 없음.
+
+# Requirements
+
+## 1. 데이터 정합성 (Data Accuracy)
+- API Fetch 로직에서 `fork === true`인 레포지토리는 분석 대상에서 제외하거나, 본인이 기여한 커밋(Author 기반 필터링)만 추출하는 로직을 구현해. '순수 기여 데이터'와 '참조용(Fork) 데이터'를 분리해서 관리할 수 있는 구조로 변경해.
+
+## 2. 병렬 처리 (Web Worker)
+- 무거운 데이터 파싱 및 연산 로직을 `Web Worker`로 분리해.
+- 데이터를 청크(Chunk) 단위로 나누어 병렬로 처리(Parallel Parsing)하고, 결과를 메인 스레드로 전달하여 UI를 업데이트하는 비동기 패턴을 적용해.
+- `Comlink` 라이브러리를 사용하여 Web Worker와 메인 스레드 간 통신을 추상화할 것을 권장함.
+
+## 3. 차트 고도화 (UX/UI)
+- 기존 디자인과 라이브러리를 유지하되, 차트 툴팁 설정을 수정해.
+- 툴팁 표시 로직에 다음 콜백을 추가해:
+  - 현재 항목의 값 / 전체 합계 * 100
+  - 소수점 둘째 자리까지 표시 (예: 12.34%)
+
+## 4. 제약 사항
+- 디자인 레이아웃 변경 금지.
+- 기존의 React/TypeScript 코드베이스를 유지할 것.
+- 성능 병목(Bottleneck) 지점을 파악하여 메모리 누수 방지 로직을 포함할 것.
+
+# Output format
+- 문제 해결을 위한 코드 수정안 (기존 로직 대비 수정된 부분 중심).
+- Web Worker 구현을 위한 메인 스레드와 워커 스레드 간의 통신 로직.
+- 데이터 필터링 로직 개선안.
+
+
+하라. 계획서 작성없이 바로하라.
+
+*Viewed [.vercelignore](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/.vercelignore) *
+
+*User accepted the command `npm install comlink`*
+
+*Viewed [.gitignore](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/.gitignore) *
+
+### User Input
+
+그러니까 package json같은건 git track 되야겠지만 export 된거 말이다. 일단 git 에 현재 추척된 파일들 봐라
+
+*User accepted the command `git ls-files`*
+
+*Edited relevant file*
+
+*User accepted the command `git add .gitignore && git commit -m "Chore: .gitignore에 PDF 및 JSON 파일 무시 규칙 추가"`*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Viewed [main.ts](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/src/main.ts) *
+
+*Edited relevant file*
+
+### Planner Response
+
+I will check the tracked files in the Git repository using `git ls-files` to see if there are any exported JSON/PDF files that are currently being tracked.
+
+*User accepted the command `git ls-files`*
+
+### Planner Response
+
+I will run `git status` to see the current status of the git repository, including modified, untracked, or newly staged files.
+
+*User accepted the command `git status`*
+
+### Planner Response
+
+I will check the contents of `.gitignore` to see what rules are currently set up.
+
+*Viewed [.gitignore](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/.gitignore) *
+
+### Planner Response
+
+I will search the repository to find all `.json` and `.pdf` files to check if there are any exported files present and if they are correctly ignored or tracked.
+
+*User accepted the command `find . -name "*.json" -o -name "*.pdf"`*
+
+### Planner Response
+
+I will run a command to list all files in the repository (excluding `.git`, `node_modules`, and `venv`) to see all existing files, tracked and untracked.
+
+*User accepted the command `find . -maxdepth 2 -not -path '*/.*' -not -path './node_modules*' -not -path './venv*'`*
+
+### Planner Response
+
+I will run `git status --ignored` to see all ignored files, verifying that the exported JSON and PDF files are correctly ignored.
+
+*User accepted the command `git status --ignored`*
+
+### Planner Response
+
+I will run the production build (`npm run build`) to ensure that all typescript files, including the newly added web worker, compile and bundle correctly.
+
+*User accepted the command `npm run build`*
+
+### Planner Response
+
+I will run the basic Python test to verify that the CLI/Python functionality has not regressed and remains fully functional.
+
+*User accepted the command `venv/bin/python test_basic.py`*
+
+### Planner Response
+
+I will view the walkthrough.md artifact to check if it needs to be updated with the details of the Web Worker, parallel parsing, and tooltips implementation.
+
+*Viewed [walkthrough.md](file:///home/rheehoselenovo2/%EA%B0%9C%EB%B0%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/gitscraper/walkthrough.md) *
+
+### Planner Response
+
+I will update the `walkthrough.md` file to document all the changes made for data accuracy, Web Worker offloading, Chart.js tooltips percentage calculation, and gitignore configuration.
+
+### Planner Response
+
+I will update the `walkthrough.md` artifact in the proper artifact directory path.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will view the task.md artifact to check our progress checklist.
+
+*Viewed [task.md](file:///home/rheehoselenovo2/.gemini/antigravity-ide/brain/1910879e-0c3d-48de-9f9e-6e12819a70de/task.md) *
+
+### Planner Response
+
+I will update the task.md file to track the tasks for this optimization phase.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will stage the modified and untracked files.
+
+*User accepted the command `git add package.json package-lock.json src/analyzer.ts src/main.ts src/worker.ts`*
+
+### Planner Response
+
+I will verify the status of staged files.
+
+*User accepted the command `git status`*
+
+### Planner Response
+
+I will commit the staged changes with the required commit message format (English prefix + Korean description).
+
+*User accepted the command `git commit -m "Perf: Web Worker 도입, 데이터 정확도 개선 및 차트 백분율 툴팁 기능 구현"`*
+
+### Planner Response
+
+I will run `git status` once more to confirm the workspace is clean.
+
+*User accepted the command `git status`*
+
+### Planner Response
+
+현재 Git 리포지토리의 추적 대상(Tracked) 및 제외 대상(Ignored) 파일을 점검 완료했습니다.
+
+### 🔍 점검 및 처리 결과
+
+1. **설정 파일 추적 유지 (Tracked)**
+   - `package.json`, `package-lock.json`, `tsconfig.json`, `vercel.json` 등 프로젝트 빌드 및 실행에 필요한 설정 파일들은 정상적으로 추적되고 있습니다.
+2. **내보내기(Export) 파일 무시 (Ignored)**
+   - `*.json` 및 `*.pdf` 파일은 제외 규칙을 적용하여 Git 추적에서 성공적으로 차단되었습니다.
+   - `git status --ignored` 결과, 생성된 리포트 파일(`hslcrb_analysis.json`, `hslcrb_analysis_ts.json`, `GitHub 프로필 분석기 - 웹 대시보드.pdf`)이 모두 Git 무시(Ignored) 상태로 관리되고 있음을 확인했습니다.
+3. **변경 사항 커밋 완료**
+   - 앞서 수정한 성능 및 데이터 최적화(Web Worker 도입, Fork/Author 필터링, Chart.js 툴팁 비율 표기) 소스 코드를 스테이징한 후 커밋했습니다. (`Perf: Web Worker 도입, 데이터 정확도 개선 및 차트 백분율 툴팁 기능 구현`)
+
+상세 내용은 [walkthrough.md](file:///home/rheehoselenovo2/.gemini/antigravity-ide/brain/1910879e-0c3d-48de-9f9e-6e12819a70de/walkthrough.md) 및 [task.md](file:///home/rheehoselenovo2/.gemini/antigravity-ide/brain/1910879e-0c3d-48de-9f9e-6e12819a70de/task.md)를 참고해 주시기 바랍니다.
