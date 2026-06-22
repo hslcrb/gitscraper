@@ -106,3 +106,23 @@ We replaced the inline SVG in the header with a dedicated, tracked static asset 
    - Added `"cleanUrls": true` and `"rewrites"` to support Single Page Application (SPA) client-side routing on Vercel deployment.
 2. **Vite Upgrade**: Upgraded Vite from v5.4.21 to v8.0.16 to address moderate/high security vulnerabilities in `esbuild`.
 
+---
+
+## 🌙 Dark Mode & 🌍 Multi-language Auto-detection
+
+We implemented complete Dark Mode support and Multi-language localization, both completely automated based on user's system preferences without any toggling UI buttons:
+
+1. **[i18n.js](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/src/i18n.js)**: Created a new translation module supporting **Korean (ko)**, **Japanese (ja)**, **Chinese (Simplified - zh)**, **Chinese (Traditional/Taiwan - zh-TW)**, **Russian (ru)**, **Spanish (es)**, and **English (en - default)**.
+2. **Dynamic Translation & HTML Tagging**:
+   - Tagged all UI elements in [index.html](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/index.html) with `data-i18n` attributes.
+   - Wrapped text chunks inside labels and buttons in `<span>` tags to ensure that translation doesn't destroy embedded SVG icons.
+   - Automatically detects system language via `navigator.language` on startup and dynamically translates placeholders, tables, status cards, error states, and progress overlays.
+3. **CSS custom properties for Dark Mode**:
+   - Overrode colors in `@media (prefers-color-scheme: dark)` inside [index.css](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/src/index.css) to support complete dark mode customization.
+   - Substituted hardcoded colors across inputs, notices, borders, search fields, step loaders, tables, and buttons with semantic variables to allow seamless transition.
+   - Customized logo background tints and SVG green filter drops to render perfectly on dark backgrounds.
+4. **Dynamic Chart.js Dark Mode Adaptation**:
+   - Configured [main.js](file:///home/rheehoselenovo2/개발프로젝트/gitscraper/src/main.js) to retrieve axis grid, tick, text, and border colors dynamically matching preferences.
+   - Registered a listener on the prefers-color-scheme media query to trigger real-time re-rendering of charts whenever the system theme switches.
+
+
