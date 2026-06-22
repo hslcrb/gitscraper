@@ -1,0 +1,15 @@
+# Ignore python files and virtual environments to prevent Vercel from auto-detecting a Python project
+venv/
+requirements.txt
+setup.py
+main.py
+test_basic.py
+example_batch.sh
+run.sh
+github-profile-analyzer.spec
+hslcrb_analysis.json
+dist/
+_AGENTS_BRAIN_/
+walkthrough.md
+task.md
+implementation_plan.md
